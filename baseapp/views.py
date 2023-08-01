@@ -24,7 +24,7 @@ def signUp(request):
         form = UserRegistrationForm()
 
     context = {'form' : form}
-    return render(request, 'network/registerPage.html', context)
+    return render(request, 'baseapp/registerPage.html', context)
 
 
 def signIn(request):
@@ -46,7 +46,7 @@ def signIn(request):
     else:
         form = UserLoginForm()
     context = {'form' : form}
-    return render(request, 'network/loginPage.html', context)
+    return render(request, 'baseapp/loginPage.html', context)
 
       
 def signOut(request):
