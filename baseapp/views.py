@@ -53,3 +53,19 @@ def signOut(request):
     logout(request)
     messages.info(request, "Successfully Logged out!!")
     return redirect("login")
+
+
+def contact(request):
+    context = {}
+    return render(request, 'baseapp/contactPage.html', context)
+
+
+def about(request):
+    context = {}
+    return render(request, 'baseapp/aboutPage.html', context)
+
+
+
+def services(request):
+    context = {}
+    return render(request, 'baseapp/servicesPage.html', context)

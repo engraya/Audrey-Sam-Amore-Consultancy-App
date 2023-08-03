@@ -8,6 +8,9 @@ urlpatterns = [
     path('signUp', views.signUp, name='register'),
     path('signIn', views.signIn, name='login'),
     path('signOut', views.signOut, name='logout'),
+    path('contact', views.contact, name="contact"),
+    path('about', views.about, name="about"),
+    path('services', views.services, name="services"),
 
 
     #password Reset urls
