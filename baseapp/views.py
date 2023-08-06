@@ -3,11 +3,13 @@ from django.http import HttpResponse
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from .forms import UserRegistrationForm, UserLoginForm
+from .models import ConsultCategories
 # Create your views here.
 
 
 def homePage(request):
-    context = {}
+    categories = ConsultCategories.objects.all()
+    context = {'categories' : categories}
     return render(request, 'baseapp/homePage.html', context)
 
 

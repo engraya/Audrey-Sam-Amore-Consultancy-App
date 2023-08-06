@@ -49,7 +49,7 @@
 
       <div class="row justify-content-center align-items-center">
         <div class="col-xl-11 d-flex align-items-center justify-content-between">
-          <h1 class="logo"><a href="{% url 'home' %}">Real Consult</a></h1>
+          <h1 class="logo"><a href="{% url 'home' %}">Audrey Sam Amore Consult</a></h1>
           <!-- Uncomment below if you prefer to use an image logo -->
           <!-- <a href="index.html" class="logo"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
 
@@ -58,7 +58,8 @@
               <li><a class="nav-link scrollto active" href="{% url 'home' %}">Home</a></li>
               <li><a class="nav-link scrollto" href="{% url 'about' %}">About</a></li>
               <li><a class="nav-link scrollto" href="{% url 'services' %}">Services</a></li>
-              <li><a class="nav-link scrollto " href="#portfolio">Portfolio</a></li>
+              <li><a class="nav-link scrollto " href="#portfolio">Best Match</a></li>
+              <li><a class="nav-link scrollto " href="">Messsages</a></li>
               <li class="dropdown"><a href="#"><span>Drop Down</span> <i class="bi bi-chevron-down"></i></a>
                 <ul>
                   <li><a href="#">Drop Down 1</a></li>
@@ -77,6 +78,10 @@
                 </ul>
               </li>
               <li><a class="nav-link scrollto" href="{% url 'contact' %}">Contact</a></li>
+              <form class="d-flex my-2 mx-lg-4">
+                <input class="form-control me-sm-2" type="text" placeholder="Search">
+                <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+            </form>
               {% if user.is_autheticated %}
 
               <a href="{% url 'logout' %}"><button class="btn btn-danger">Logout</button></a>
@@ -84,8 +89,8 @@
               {% else %}
 
                           
-              <a href="{% url 'register' %}"><button class="btn btn-primary mx-md-1">Register</button></a>
-              <a href="{% url 'login' %}"><button class="btn btn-success mx-md-1">Login</button></a>
+              <a href="{% url 'register' %}"><button class="btn btn-primary d-flex mx-lg-1">Register</button></a>
+              <a href="{% url 'login' %}"><button class="btn btn-success d-flex">Login</button></a>
 
               {% endif %}
   
@@ -114,7 +119,7 @@
         <div class="row">
 
           <div class="col-lg-3 col-md-6 footer-info">
-            <h3>BizPage</h3>
+            <h3>Audrey Sam Amore Consult</h3>
             <p>Cras fermentum odio eu feugiat lide par naso tierra. Justo eget nada terra videa magna derita valies darta donna mare fermentum iaculis eu non diam phasellus. Scelerisque felis imperdiet proin fermentum leo. Amet volutpat consequat mauris nunc congue.</p>
           </div>
 
@@ -163,7 +168,7 @@
 
     <div class="container">
       <div class="copyright">
-        &copy; Copyright <strong>BizPage</strong>. All Rights Reserved
+        &copy; Copyright <strong>Audrey Sam Amore Consult</strong>. All Rights Reserved
       </div>
       <div class="credits">
         <!--
