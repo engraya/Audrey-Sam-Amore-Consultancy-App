@@ -29,7 +29,7 @@ class UserProfile(models.Model):
         return self.user
 
 
-class ConsultancService(models.Model):
+class ConsultancyService(models.Model):
     title = models.CharField(max_length=200)
     serviceDescripton = models.TextField()
     serviceRate = models.DecimalField(max_digits=10, decimal_places=2)

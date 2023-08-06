@@ -1,9 +1,9 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from .forms import UserRegistrationForm, UserLoginForm
-from .models import ConsultCategories
+from .models import ConsultCategories, UserProfile, ConsultancyService, ConsultancyRequest
 # Create your views here.
 
 
@@ -71,3 +71,44 @@ def about(request):
 def services(request):
     context = {}
     return render(request, 'baseapp/servicesPage.html', context)
+
+
+def Profile(request, username):
+    userProfile = get_object_or_404(UserProfile, userUsername=username)
+    context = {'userProfile' : userProfile}
+    return render(request, 'baseapp/userProfile.html', context)
+
+
+def ConsultantServices(request, username):
+    services = ConsultancyService.objects.filter(consultantUsername=username)
+    context = {'services' : services}
+    return render(request, 'baseapp/consultantServices.html', context)
+
+
+def ConsultancyServiceDetail(request, serviceID):
+    service = get_object_or_404(ConsultancyService, id=serviceID)
+    if request.method == 'POST':
+        ConsultancyRequest.objects.create(
+            client=request.user,
+            consultant=service.consultant,
+            service=service
+        )
+        return redirect('userProfile', username=request.user.username)
+    context = {'service' : service}
+    return render(request, 'baseapp/serviceDetail.html', context)
+
+def consultationRequest(request):
+    consultationRequests = ConsultancyRequest.objects.filter(consultant=request.user)
+    context = {'consultationRequests' : consultationRequests}
+    return render(request, 'baseapp/consultationRequest.html', context)
+
+
+def acceptOrDeclineRequest(request, request.id, action):
+    consultationRequest = get_object_or_404(ConsultancyRequest, id=request.id)
+    if action == 'Accept':
+        consultationRequest.requestStatus = 'Accepted'
+        consultationRequest.save()
+    elif action == 'Decline':
+        consultationRequest.requestStatus = 'Declined'
+        consultationRequest.save()
+    return redirect('consultationRequests')
