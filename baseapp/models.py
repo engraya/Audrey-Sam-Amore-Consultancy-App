@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django_countries.fields import CountryField
+from PIL import Image
+from datetime import datetime
 
 # Create your models here.
 
@@ -18,12 +21,22 @@ class UserProfile(models.Model):
         ('Client', 'Client'),
         ('Consultant', 'Consultant')
     )
+    GENDER_CHOICES = (
+        ("Male", "Male"),
+        ("Female", "Female")
+    )
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    gender = models.CharField(max_length=12, null=True, blank=True, choices=GENDER_CHOICES)
+    country = CountryField(blank_label="Select Country")
     profession = models.CharField(max_length=100, null=True, blank=True)
     biography = models.TextField(null=True, blank=True)
     profilePicture = models.ImageField(upload_to='profilePics/', blank=True, null=True)
     userType = models.CharField(max_length=20, choices=USER_TYPE_CHOICES)
     specialization = models.CharField(max_length=100, null=True, blank=True)
+    facebook = models.URLField(max_length=200, null=True, blank=True)
+    twitter = models.URLField(max_length=200, null=True, blank=True)
+    instagram = models.URLField(max_length=200, null=True, blank=True)
+    website = models.UELField(max_length=200, null=True, blank=True)
 
     def __str__(self):
         return self.user
@@ -40,16 +53,17 @@ class ConsultancyService(models.Model):
         return self.title
 
 
-class ConsultancyRequest(models.Model):
+class ConsultationRequest(models.Model):
     STATUS_CHOICES = (
-        ('Pending', 'Pending'),
-        ('Accepted', 'Accepted'),
-        ('Declined', 'Declined')
+        ('pending', 'Pending'),
+        ('accepted', 'Accepted'),
+        ('declined', 'Declined')
     )
     consultant = models.ForeignKey(User, on_delete=models.CASCADE)
     client = models.ForeignKey(User, on_delete=models.CASCADE)
-    service = models.ForeignKey(ConsultancService, on_delete=models.CASCADE)
+    service = models.ForeignKey(ConsultancyService, on_delete=models.CASCADE)
     requestStatus = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
+
 
 
 

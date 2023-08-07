@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from .forms import UserRegistrationForm, UserLoginForm
-from .models import ConsultCategories, UserProfile, ConsultancyService, ConsultancyRequest
+from .models import ConsultCategories, UserProfile, ConsultancyService, ConsultationRequest
 # Create your views here.
 
 
@@ -73,42 +73,42 @@ def services(request):
     return render(request, 'baseapp/servicesPage.html', context)
 
 
-def Profile(request, username):
+def profile(request, username):
     userProfile = get_object_or_404(UserProfile, userUsername=username)
     context = {'userProfile' : userProfile}
     return render(request, 'baseapp/userProfile.html', context)
 
 
-def ConsultantServices(request, username):
+def consultantServices(request, username):
     services = ConsultancyService.objects.filter(consultantUsername=username)
     context = {'services' : services}
     return render(request, 'baseapp/consultantServices.html', context)
 
 
-def ConsultancyServiceDetail(request, serviceID):
+def consultancyServiceDetail(request, serviceID):
     service = get_object_or_404(ConsultancyService, id=serviceID)
     if request.method == 'POST':
-        ConsultancyRequest.objects.create(
+        ConsultationRequest.objects.create(
             client=request.user,
             consultant=service.consultant,
             service=service
         )
-        return redirect('userProfile', username=request.user.username)
+        return redirect('userprofile', username=request.user.username)
     context = {'service' : service}
     return render(request, 'baseapp/serviceDetail.html', context)
 
 def consultationRequest(request):
-    consultationRequests = ConsultancyRequest.objects.filter(consultant=request.user)
+    consultationRequests = ConsultationRequest.objects.filter(consultant=request.user)
     context = {'consultationRequests' : consultationRequests}
-    return render(request, 'baseapp/consultationRequest.html', context)
+    return render(request, 'baseapp/consultationRequests.html', context)
 
 
-def acceptOrDeclineRequest(request, request.id, action):
-    consultationRequest = get_object_or_404(ConsultancyRequest, id=request.id)
-    if action == 'Accept':
-        consultationRequest.requestStatus = 'Accepted'
+def acceptDeclineRequest(request, requestID, action):
+    consultationRequest = get_object_or_404(ConsultationRequest, id=requestID)
+    if action == 'accept':
+        consultationRequest.requestStatus = 'accepted'
         consultationRequest.save()
-    elif action == 'Decline':
-        consultationRequest.requestStatus = 'Declined'
+    elif action == 'decline':
+        consultationRequest.requestStatus = 'declined'
         consultationRequest.save()
     return redirect('consultationRequests')
