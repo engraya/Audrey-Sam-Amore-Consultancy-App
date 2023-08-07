@@ -18,8 +18,8 @@ class ConsultCategories(models.Model):
 
 class UserProfile(models.Model):
     USER_TYPE_CHOICES = (
-        ('Client', 'Client'),
-        ('Consultant', 'Consultant')
+        ('client', 'Client'),
+        ('consultant', 'Consultant')
     )
     GENDER_CHOICES = (
         ("Male", "Male"),
@@ -36,7 +36,7 @@ class UserProfile(models.Model):
     facebook = models.URLField(max_length=200, null=True, blank=True)
     twitter = models.URLField(max_length=200, null=True, blank=True)
     instagram = models.URLField(max_length=200, null=True, blank=True)
-    website = models.UELField(max_length=200, null=True, blank=True)
+    website = models.URLField(max_length=200, null=True, blank=True)
 
     def __str__(self):
         return self.user
@@ -59,8 +59,8 @@ class ConsultationRequest(models.Model):
         ('accepted', 'Accepted'),
         ('declined', 'Declined')
     )
-    consultant = models.ForeignKey(User, on_delete=models.CASCADE)
-    client = models.ForeignKey(User, on_delete=models.CASCADE)
+    consultant = models.ForeignKey(User, on_delete=models.CASCADE, related_name='consultant')
+    client = models.ForeignKey(User, on_delete=models.CASCADE, related_name='client')
     service = models.ForeignKey(ConsultancyService, on_delete=models.CASCADE)
     requestStatus = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
 

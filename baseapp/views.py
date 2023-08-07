@@ -89,8 +89,8 @@ def consultancyServiceDetail(request, serviceID):
     service = get_object_or_404(ConsultancyService, id=serviceID)
     if request.method == 'POST':
         ConsultationRequest.objects.create(
-            client=request.user,
-            consultant=service.consultant,
+            requestClient=request.user,
+            requestConsultant=service.consultant,
             service=service
         )
         return redirect('userprofile', username=request.user.username)
