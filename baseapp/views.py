@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from .forms import UserRegistrationForm, UserLoginForm
-from .models import ConsultCategories, UserProfile, ConsultancyService, ConsultationRequest
+from .models import ConsultCategories, UserProfile, ConsultancyService, ConsultationRequest, Notification, Message, User
 # Create your views here.
 
 
@@ -112,3 +112,42 @@ def acceptDeclineRequest(request, requestID, action):
         consultationRequest.requestStatus = 'declined'
         consultationRequest.save()
     return redirect('consultationRequests')
+
+
+def notiifcations(request):
+    user = request.user
+    notifcations = Notification.objects.filter(user=user)
+    context = {'notifications' : notifcations}
+    return render(request, 'baseapp/notifications.html', context)
+
+
+def messsages(request, recipientUsername):
+    sender = request.user
+    recipient = get_object_or_404(User, username=recipientUsername)
+
+    if request.method == 'POST':
+        messageContent = request.POST.get('messageContent')
+        Message.objects.create(sender=sender, recipient=recipient, messageContent=messageContent)
+        return redirect('messaging', recipientUsername=recipientUsername)
+    
+
+    messages = Message.objects.filter(sender=sender, recipient=recipient) | Message.objects.filter(sender=recipient, recipient=sender)
+    messages = messages.order_by('timestamp')
+
+    context = {'recipient' : recipient, 'messages' : messages}
+    return render(request, 'baseapp/messaging.html', context)
+
+
+def sendMessage(request):
+    if request.method == 'POST':
+        sender = request.user
+        recipientusername = request.POST.get('recipient')
+        recipient = get_object_or_404(User, username=recipientusername)
+        messageContent = request.POST.get('messageContent')
+        Message.objects.create(sender=sender, recipient=recipient, messageContent=messageContent)
+        return JsonResponse({'success' : True})
+    return JsonResponse({'success' : False})
+    
+
+
+

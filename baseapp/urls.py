@@ -13,6 +13,10 @@ urlpatterns = [
     path('services', views.services, name="services"),
 
 
+
+    
+
+
     #password Reset urls
     path('reset_password/', auth_views.PasswordResetView.as_view(template_name="network/passwordManage/password_reset_form.html"), name="reset_password"),
     path('reset_password_done/', auth_views.PasswordResetDoneView.as_view(template_name="network/passwordManage/password_reset_sent.html"), name="password_reset_done"),
