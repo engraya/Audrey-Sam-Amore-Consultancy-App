@@ -1,0 +1,15 @@
+
+<h1>{{ profile.user.username }} Profile</h1>
+<img src="{{ profile.profile_picture.url }}" alt="Profile Picture">
+<p>{{ profile.biography }}</p>
+{% if profile.userType == 'consultant' %}
+    <h2>Services</h2>
+    <ul>
+        {% for service in profile.consultancyservice_set.all %}
+        <li><a href="{% url 'service_detail' service.id %}">{{ service.title }}</a></li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+
+

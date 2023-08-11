@@ -3,7 +3,7 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from .forms import UserRegistrationForm, UserLoginForm
-from .models import ConsultCategories, UserProfile, ConsultancyService, ConsultationRequest, Notification, Message, User
+from .models import ConsultCategories, Profile, ConsultancyService, ConsultationRequest, Notification, Message, User
 # Create your views here.
 
 
@@ -74,33 +74,40 @@ def services(request):
 
 
 def profile(request, username):
-    userProfile = get_object_or_404(UserProfile, userUsername=username)
-    context = {'userProfile' : userProfile}
+    profile = get_object_or_404(Profile, user__username=username)
+    context = {'profile' : profile}
     return render(request, 'baseapp/userProfile.html', context)
 
 
+
+
 def consultantServices(request, username):
-    services = ConsultancyService.objects.filter(consultantUsername=username)
-    context = {'services' : services}
+    services = ConsultancyService.objects.filter(consultant__username=username)
+    context = {'services': services}
     return render(request, 'baseapp/consultantServices.html', context)
+
+
 
 
 def consultancyServiceDetail(request, serviceID):
     service = get_object_or_404(ConsultancyService, id=serviceID)
     if request.method == 'POST':
         ConsultationRequest.objects.create(
-            requestClient=request.user,
-            requestConsultant=service.consultant,
+            client=request.user,
+            consultant=service.consultant,
             service=service
         )
-        return redirect('userprofile', username=request.user.username)
+        return redirect('profile', username=request.user.username)
     context = {'service' : service}
     return render(request, 'baseapp/serviceDetail.html', context)
+
+
 
 def consultationRequest(request):
     consultationRequests = ConsultationRequest.objects.filter(consultant=request.user)
     context = {'consultationRequests' : consultationRequests}
     return render(request, 'baseapp/consultationRequests.html', context)
+
 
 
 def acceptDeclineRequest(request, requestID, action):
@@ -114,6 +121,7 @@ def acceptDeclineRequest(request, requestID, action):
     return redirect('consultationRequests')
 
 
+
 def notiifcations(request):
     user = request.user
     notifcations = Notification.objects.filter(user=user)
@@ -121,7 +129,9 @@ def notiifcations(request):
     return render(request, 'baseapp/notifications.html', context)
 
 
-def messsages(request, recipientUsername):
+
+
+def messaging(request, recipientUsername):
     sender = request.user
     recipient = get_object_or_404(User, username=recipientUsername)
 
@@ -138,6 +148,8 @@ def messsages(request, recipientUsername):
     return render(request, 'baseapp/messaging.html', context)
 
 
+
+
 def sendMessage(request):
     if request.method == 'POST':
         sender = request.user
@@ -148,6 +160,22 @@ def sendMessage(request):
         return JsonResponse({'success' : True})
     return JsonResponse({'success' : False})
     
+
+def notificationsMessageCount(request):
+    user = request.user
+    notiifcationCount = Notification.objects.filter(user=user, read=False).count()
+    messageCount = Message.objects.filter(recipient=user).count()
+
+    return JsonResponse({
+        'notification_count' : notiifcationCount,
+        'message_count' : messageCount
+    })
+
+
+
+
+
+
 
 
 

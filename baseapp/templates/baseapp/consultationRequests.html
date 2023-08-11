@@ -1,0 +1,17 @@
+
+    <h1>Consultation Requests</h1>
+    <ul>
+        {% for request in consultationRequests %}
+            <li>
+                {{ request.client.username }} requested a consultation for "{{ request.service.title }}".
+                {% if request.status == 'pending' %}
+                    <a href="{% url 'accept_decline_request' request.id 'accept' %}">Accept</a> /
+                    <a href="{% url 'accept_decline_request' request.id 'decline' %}">Decline</a>
+                {% elif request.status == 'accepted' %}
+                    (Accepted)
+                {% elif request.status == 'declined' %}
+                    (Declined)
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
