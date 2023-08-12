@@ -46,7 +46,7 @@ class ConsultancyService(models.Model):
     title = models.CharField(max_length=200)
     serviceDescripton = models.TextField()
     serviceRate = models.DecimalField(max_digits=10, decimal_places=2)
-    consultant = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    consultant = models.ForeignKey(User, on_delete=models.CASCADE)
     availability = models.CharField(max_length=100)
 
     def __str__(self):
@@ -62,14 +62,14 @@ class ConsultationRequest(models.Model):
     consultant = models.ForeignKey(User, on_delete=models.CASCADE, related_name='consultant')
     client = models.ForeignKey(User, on_delete=models.CASCADE, related_name='client')
     service = models.ForeignKey(ConsultancyService, on_delete=models.CASCADE)
-    requestStatus = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
+    requestStatus = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True, null=True)
 
 
 
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    message = models.CharField(max_length=200)
+    message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     read = models.BooleanField(default=False)
 
