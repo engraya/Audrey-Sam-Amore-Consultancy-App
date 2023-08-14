@@ -20,17 +20,16 @@ urlpatterns = [
 
 
 
-    path('notifications/', views.notiifcations, name='notifications'),
+    path('notifications', views.notiifcations, name='notifications'),
     path('messaging/<str:recipientUsername>/', views.messaging, name='messaging'),
-    path('send_message_ajax/', views.sendMessage, name='sendMessage'),
-    path('get_notification_message_counts_ajax/', views.notificationsMessageCount, name='get_notification_message_counts_ajax'),
+    path('send_message/', views.sendMessage, name='sendMessage'),
+    path('get_notifications_message_count/', views.notificationsMessageCount, name='get_notifications_message_count'),
+    path('loadMessages/<str:recipient_username>/', views.loadMessages, name='loadMessages'),
 
 
 
 
     
-
-
     #password Reset urls
     path('reset_password/', auth_views.PasswordResetView.as_view(template_name="network/passwordManage/password_reset_form.html"), name="reset_password"),
     path('reset_password_done/', auth_views.PasswordResetDoneView.as_view(template_name="network/passwordManage/password_reset_sent.html"), name="password_reset_done"),

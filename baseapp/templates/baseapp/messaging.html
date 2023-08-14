@@ -3,12 +3,13 @@
     <div id="message-container">
         {% for message in messages %}
             <div class="{% if message.sender == request.user %}sent{% else %}received{% endif %}">
-                <p>{{ message.content }}</p>
+                <p>{{ message.messsageContent }}</p>
             </div>
         {% endfor %}
     </div>
-    <form id="message-form">
-        <input type="text" id="message-input" placeholder="Type your message...">
+    <form id="message-form" method="POST">
+        {% csrf_token %}
+        <input type="text" id="message-input" name="messsageContent" placeholder="Type your message...">
         <button type="submit">Send</button>
     </form>
     <script>
@@ -32,7 +33,7 @@
             const message = messageInput.value;
             if (message.trim() !== '') {
                 // Send message to the server via AJAX
-                fetch('{% url 'send_message_ajax' %}', {
+                fetch('{% url 'sendMessage' %}', {
                     method: 'POST',
                     headers: {
                         'X-CSRFToken': '{{ csrf_token }}',
@@ -52,12 +53,12 @@
 
         // Function to load messages from the server via AJAX
         function loadMessages() {
-            fetch('{% url 'load_messages_ajax' recipient.username %}')
+            fetch('{% url 'loadMessages' recipient.username %}')
             .then(response => response.json())
             .then(data => {
                 // Append each message to the message container
                 data.messages.forEach(message => {
-                    appendMessage(message.content, message.sender);
+                    appendMessage(message.messsageContent, message.sender);
                 });
             });
         }

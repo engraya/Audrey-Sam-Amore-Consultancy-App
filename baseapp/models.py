@@ -63,8 +63,9 @@ class ConsultationRequest(models.Model):
     consultant = models.ForeignKey(User, on_delete=models.CASCADE, related_name='consultant')
     client = models.ForeignKey(User, on_delete=models.CASCADE, related_name='client')
     service = models.ForeignKey(ConsultancyService, on_delete=models.CASCADE)
+    requestMesssage = models.TextField()
     requestStatus = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
-    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 
@@ -80,6 +81,7 @@ class Message(models.Model):
     recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recievedMessages')
     messsageContent = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
+
 
     
 

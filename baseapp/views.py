@@ -118,7 +118,7 @@ def acceptDeclineRequest(request, requestID, action):
     elif action == 'decline':
         consultationRequest.requestStatus = 'declined'
         consultationRequest.save()
-    return redirect('consultationRequests')
+    return redirect('consultation_request')
 
 
 
@@ -161,6 +161,7 @@ def sendMessage(request):
     return JsonResponse({'success' : False})
     
 
+
 def notificationsMessageCount(request):
     user = request.user
     notiifcationCount = Notification.objects.filter(user=user, read=False).count()
@@ -170,6 +171,19 @@ def notificationsMessageCount(request):
         'notification_count' : notiifcationCount,
         'message_count' : messageCount
     })
+
+
+def loadMessages(request, recipient_username):
+    sender = request.user
+    recipient = User.objects.get(username=recipient_username)
+    messages = Message.objects.filter(
+        (models.Q(sender=sender) & models.Q(recipient=recipient)) | 
+        (models.Q(sender=recipient) & models.Q(recipient=sender))
+    )
+
+    messages_data = [{'content' : message.messsageContent, 'sender' : message.sender.username} for message in messages]
+    return JsonResponse({'messages' : messages_data})
+
 
 
 

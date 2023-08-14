@@ -5,6 +5,7 @@
     <p>Availability: {{ service.availability }}</p>
     <form method="POST" action="{% url 'service_detail' service.id %}">
         {% csrf_token %}
+        <textarea name="requestMesssage" cols="30" rows="10"></textarea><br>
         <button type="submit">Request Consultation</button>
     </form>
 
