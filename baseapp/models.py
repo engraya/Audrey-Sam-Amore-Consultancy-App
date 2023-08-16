@@ -69,18 +69,25 @@ class ConsultationRequest(models.Model):
 
 
 
+class Message(models.Model):
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
+    reciever = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recieved_messages')
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.sender} to {self.reciever}'
+    
+
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
-    read = models.BooleanField(default=False)
+    is_read = models.BooleanField(default=False)
 
 
-class Message(models.Model):
-    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sentMessages')
-    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recievedMessages')
-    messsageContent = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return f'{self.user} : {self.message}'
 
 
     
