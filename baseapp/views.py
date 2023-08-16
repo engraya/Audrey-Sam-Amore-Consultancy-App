@@ -131,34 +131,49 @@ def notiifcations(request):
 
 
 
-def messaging(request, recipientUsername):
-    sender = request.user
-    recipient = get_object_or_404(User, username=recipientUsername)
+# def messaging(request, recipientUsername):
+#     sender = request.user
+#     recipient = get_object_or_404(User, username=recipientUsername)
 
-    if request.method == 'POST':
-        messageContent = request.POST.get('messageContent')
-        Message.objects.create(sender=sender, recipient=recipient, messageContent=messageContent)
-        return redirect('messaging', recipientUsername=recipientUsername)
+#     if request.method == 'POST':
+#         messageContent = request.POST.get('messageContent')
+#         Message.objects.create(sender=sender, recipient=recipient, messageContent=messageContent)
+#         return redirect('messaging', recipientUsername=recipientUsername)
     
 
-    messages = Message.objects.filter(sender=sender, recipient=recipient) | Message.objects.filter(sender=recipient, recipient=sender)
-    messages = messages.order_by('timestamp')
+#     messages = Message.objects.filter(sender=sender, recipient=recipient) | Message.objects.filter(sender=recipient, recipient=sender)
+#     messages = messages.order_by('timestamp')
 
-    context = {'recipient' : recipient, 'messages' : messages}
-    return render(request, 'baseapp/messaging.html', context)
-
-
+#     context = {'recipient' : recipient, 'messages' : messages}
+#     return render(request, 'baseapp/messaging.html', context)
 
 
-def sendMessage(request):
+
+
+# def sendMessage(request):
+#     if request.method == 'POST':
+#         sender = request.user
+#         recipientusername = request.POST.get('recipient')
+#         recipient = get_object_or_404(User, username=recipientusername)
+#         messageContent = request.POST.get('messageContent')
+#         Message.objects.create(sender=sender, recipient=recipient, messageContent=messageContent)
+#         return JsonResponse({'success' : True})
+#     return JsonResponse({'success' : False})
+
+
+
+def sendMessage(request, reciever_id):
     if request.method == 'POST':
-        sender = request.user
-        recipientusername = request.POST.get('recipient')
-        recipient = get_object_or_404(User, username=recipientusername)
-        messageContent = request.POST.get('messageContent')
-        Message.objects.create(sender=sender, recipient=recipient, messageContent=messageContent)
-        return JsonResponse({'success' : True})
-    return JsonResponse({'success' : False})
+        content = request.POST.get('content')
+        reciever  =User.objects.get(id=reciever_id)
+        Message.objects.create(sender=request.user, reciever=reciever, content=content)
+        return redirect('inbox')
+
+def inbox(request):
+    recieved_messages = Message.objects.filter(reciever=request.user)
+    context = {'messages' : recieved_messages}
+    return render(request, 'baseapp/inbox', context)
+
     
 
 
