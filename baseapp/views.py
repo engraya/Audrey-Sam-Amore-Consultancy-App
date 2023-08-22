@@ -133,14 +133,14 @@ def scheduleAppointment(request, consultant_id):
     context = {'form' : form, 'consultant' : consultant}
     return render(request, 'baseapp/shedule_appointment.html', context)
 
-@login_required
+
 def manageAppointments(request):
     appointments = Appointment.objects.filter(client=request.user.client)
     context = {'appiontments' : appointments}
     return render(request, 'baseapp/manage_appiontments.html', context)
 
 
-@login_required
+
 def cancelAppointment(request, appointment_id):
     appiontment = get_object_or_404(Appointment, id=appointment_id)
 
