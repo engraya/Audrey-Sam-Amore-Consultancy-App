@@ -1,0 +1,31 @@
+
+  <h1>Consultant Profile: {{ consultant.user.username }}</h1>
+  
+  <div class="card">
+    <div class="card-body">
+      <h2>Expertise: {{ consultant.expertise }}</h2>
+      <p>Hourly Rate: ${{ consultant.hourly_rate }}</p>
+      <p>Bio: {{ consultant.bio }}</p>
+    </div>
+  </div>
+  
+  <h2>Schedule an Appointment</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Schedule</button>
+  </form>
+<hr>
+  <h2>Send Message</h2>
+<!-- Your form code here -->
+<form method="post" action="{% url 'send_message' consultant.id %}">
+  {% csrf_token %}
+  <!-- Your form fields here -->
+  <button type="submit">Send Message</button>
+</form>
+
+
+
+  
+  <a href="{% url 'consultant_list' %}" class="btn btn-secondary">Back to Consultant List</a>
+

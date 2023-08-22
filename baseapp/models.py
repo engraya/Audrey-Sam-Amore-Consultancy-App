@@ -6,7 +6,6 @@ from datetime import datetime
 
 # Create your models here.
 
-
 class ConsultCategories(models.Model):
     title = models.CharField(max_length=200, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
@@ -60,8 +59,8 @@ class ConsultationRequest(models.Model):
         ('accepted', 'Accepted'),
         ('declined', 'Declined')
     )
-    consultant = models.ForeignKey(User, on_delete=models.CASCADE, related_name='consultant')
-    client = models.ForeignKey(User, on_delete=models.CASCADE, related_name='client')
+    consultant = models.ForeignKey(User, on_delete=models.CASCADE, related_name='Consultation_consultant')
+    client = models.ForeignKey(User, on_delete=models.CASCADE, related_name='Consultation_client')
     service = models.ForeignKey(ConsultancyService, on_delete=models.CASCADE)
     requestMesssage = models.TextField()
     requestStatus = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
@@ -69,9 +68,17 @@ class ConsultationRequest(models.Model):
 
 
 
+class Appointment(models.Model):
+    client = models.ForeignKey(User, on_delete=models.CASCADE,  related_name='Appointment_client')
+    consultant = models.ForeignKey(User, on_delete=models.CASCADE, related_name='Appointment_consultant')
+    appointment_date = models.DateTimeField(auto_now_add=True)
+    notes = models.TextField()
+
+
+
 class Message(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
-    reciever = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recieved_messages')
+    reciever = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recieved_messages', null=True)
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
@@ -90,7 +97,16 @@ class Notification(models.Model):
         return f'{self.user} : {self.message}'
 
 
-    
+class Consultant(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='consultant')
+    expertise = models.CharField(max_length=100)
+    bio = models.TextField()
+    hourly_rate = models.DecimalField(max_digits=8, decimal_places=2)
+
+
+class Client(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='client')
+    contact_info = models.CharField(max_length=200)
 
 
 

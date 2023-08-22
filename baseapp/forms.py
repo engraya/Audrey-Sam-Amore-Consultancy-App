@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.forms import ModelForm
+from .models import Appointment
 
 
 class UserRegistrationForm(UserCreationForm):
@@ -36,3 +37,33 @@ class UserLoginForm(AuthenticationForm):
     class Meta:
         model = User
         fields = '__all__'
+
+
+
+class AppointmentForm(forms.ModelForm):
+    class Meta:
+        model = Appointment
+        fields = ['notes']
+
+
+
+
+class AppointmentRequestForm(forms.Form):
+    appointment_date = forms.DateTimeField(label='Appointment Date and Time', widget=forms.TextInput(attrs={'type': 'datetime-local'}))
+    notes = forms.CharField(label='Notes', widget=forms.Textarea(attrs={'rows': 4}))
+
+    def clean_appointment_date(self):
+        appointment_date = self.cleaned_data.get('appointment_date')
+        # Add validation logic here if needed
+        # For example, ensure the appointment date is in the future
+        return appointment_date
+
+
+
+class AppointmentResponseForm(forms.ModelForm):
+    class Meta:
+        model = Appointment
+        fields = ['notes']
+
+class MessageForm(forms.Form):
+    message = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}))

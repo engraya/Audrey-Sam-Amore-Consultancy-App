@@ -56,15 +56,13 @@
           <nav id="navbar" class="navbar">
             <ul>
               <li><a class="nav-link scrollto active" href="{% url 'home' %}">Home</a></li>
-              <li><a class="nav-link scrollto" href="{% url 'about' %}">About</a></li>
-              <li><a class="nav-link scrollto" href="{% url 'consultation_request' %}">Consultaion Requests</a></li>
+              <li><a class="nav-link scrollto active" href="{% url 'consultants' %}">Consultants</a></li>
+              <li><a class="nav-link scrollto" href="{% url 'consultation_request' %}">Consultation Requests</a></li>
+              <li><a class="nav-link scrollto" href="{% url 'consultant_sevices' user.username  %}">Services</a></li>
               <li><a class="nav-link scrollto " href="{% url 'profile' user.username  %}">Profile</a></li>
-              <li><a class="nav-link scrollto " href="">Messsages</a></li>
+              <li><a class="nav-link scrollto " href="{% url 'inbox' %}">Inbox</a></li>
               <li><a class="nav-link scrollto" href="{% url 'notifications' %}">Notifications</a></li>
-              <form class="d-flex my-2 mx-lg-4">
-                <input class="form-control me-sm-2" type="text" placeholder="Search">
-                <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-            </form>
+  
               {% if user.is_autheticated %}
 
               <a href="{% url 'logout' %}"><button class="btn btn-danger">Logout</button></a>
@@ -79,6 +77,8 @@
   
      
             </ul>
+
+            <a class="" href="{% url 'profile' user.username %}">Welcome {{user.username}}</a>
             <i class="bi bi-list mobile-nav-toggle"></i>
           </nav><!-- .navbar -->
 
@@ -154,20 +154,15 @@
         &copy; Copyright <strong>Audrey Sam Amore Consult</strong>. All Rights Reserved
       </div>
       <div class="credits">
-        <!--
-        All the links in the footer should remain intact.
-        You can delete the links only if you purchased the pro version.
-        Licensing information: https://bootstrapmade.com/license/
-        Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/buy/?theme=BizPage
-      -->
+
+
         Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
       </div>
     </div>
   </footer><!-- End Footer -->
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-  <!-- Uncomment below i you want to use a preloader -->
-  <!-- <div id="preloader"></div> -->
+
 
   <!-- Vendor JS Files -->
   <script src="{% static 'assets/vendor/purecounter/purecounter_vanilla.js' %}"></script>
