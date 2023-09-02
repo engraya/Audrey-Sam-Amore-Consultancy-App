@@ -58,12 +58,10 @@
               <li><a class="nav-link scrollto active" href="{% url 'home' %}">Home</a></li>
               <li><a class="nav-link scrollto active" href="{% url 'consultants' %}">Consultants</a></li>
               <li><a class="nav-link scrollto" href="{% url 'consultation_request' %}">Consultation Requests</a></li>
-              <li><a class="nav-link scrollto" href="{% url 'consultant_sevices' user.username  %}">Services</a></li>
-              <li><a class="nav-link scrollto " href="{% url 'profile' user.username  %}">Profile</a></li>
               <li><a class="nav-link scrollto " href="{% url 'inbox' %}">Inbox</a></li>
               <li><a class="nav-link scrollto" href="{% url 'notifications' %}">Notifications</a></li>
   
-              {% if user.is_autheticated %}
+              {% if user.is_authenticated %}
 
               <a href="{% url 'logout' %}"><button class="btn btn-danger">Logout</button></a>
 

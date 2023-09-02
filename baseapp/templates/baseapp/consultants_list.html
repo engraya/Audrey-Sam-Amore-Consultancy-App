@@ -17,7 +17,7 @@
           <td>{{ consultant.expertise }}</td>
           <td>${{ consultant.hourly_rate }}</td>
           <td>
-            <a href="{% url 'consultant_detail' consultant.id %}" class="btn btn-info">View Profile</a>
+            <a href="{% url 'consultant_detail' consultant.user.id %}" class="btn btn-info">View Profile</a>
           </td>
         </tr>
       {% empty %}

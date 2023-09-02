@@ -1,19 +1,63 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
-from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from .forms import UserRegistrationForm, UserLoginForm, AppointmentForm, AppointmentRequestForm, AppointmentResponseForm, MessageForm
 from django.contrib.auth.decorators import login_required
-from .models import ConsultCategories, Profile, ConsultancyService, ConsultationRequest, Notification, Message, User, Client, Consultant, Appointment
+from .models import ConsultCategories, ConsultancyService, ConsultationRequest, Notification, Message, User, Client, Consultant, Appointment
 
+
+#imported
 # Create your views here.
 
+    template_name = 'manage_appointments.html'
+    model = MainAppointment
 
+    context_object_name = 'appointments'
+
+    login_required = True
+    paginate_by = 2
+
+
+    def post(self, request):
+        date = request.POST.get("date")
+        appointment_id = request.POST.get("appointment-id")
+
+        appointment = MainAppointment.objects.get(id=appointment_id)
+        appointment.accepted = True
+        appointment.accepted_date = datetime.datetime.now()
+        appointment.save()
+
+        data = {
+            'fname': appointment.first_name,
+            'date': date
+        }
+
+        message = get_template('email.html').render(data)
+
+        email = EmailMessage(
+            "About your appointment",
+            message,
+            settings.EMAIL_HOST_USER,
+            [appointment.email],
+        )
+        email_content_subtype = 'html'
+        email.send()
+
+        messages.add_message(request, messages.SUCCESS, f"You accepted the appointment of {appointment.first_name}")
+        return HttpResponseRedirect(request.path)
+
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        appointments = MainAppointment.objects.all()
+        context.update({'title': 'Manage Appointments'})
+        return context
+
+#\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\#####
 def homePage(request):
     categories = ConsultCategories.objects.all()
     context = {'categories' : categories}
     return render(request, 'baseapp/homePage.html', context)
-
 
 def signUp(request):
     if request.method == 'POST':
@@ -28,7 +72,7 @@ def signUp(request):
         form = UserRegistrationForm()
 
     context = {'form' : form}
-    return render(request, 'baseapp/registerPage.html', context)
+    return render(request, 'accounts/registerPage.html', context)
 
 
 def signIn(request):
@@ -50,7 +94,7 @@ def signIn(request):
     else:
         form = UserLoginForm()
     context = {'form' : form}
-    return render(request, 'baseapp/loginPage.html', context)
+    return render(request, 'accounts/loginPage.html', context)
 
       
 def signOut(request):
@@ -59,11 +103,10 @@ def signOut(request):
     return redirect("login")
 
 
-
 def profile(request, username):
     profile = get_object_or_404(Profile, user__username=username)
     context = {'profile' : profile}
-    return render(request, 'baseapp/userProfile.html', context)
+    return render(request, 'accounts/userProfile.html', context)
 
 
 def consultantServices(request, username):
@@ -85,12 +128,10 @@ def consultancyServiceDetail(request, serviceID):
     return render(request, 'baseapp/serviceDetail.html', context)
 
 
-
 def consultationRequest(request):
     consultationRequests = ConsultationRequest.objects.filter(consultant=request.user)
     context = {'consultationRequests' : consultationRequests}
     return render(request, 'baseapp/consultationRequests.html', context)
-
 
 
 def acceptDeclineRequest(request, requestID, action):
@@ -116,29 +157,28 @@ def consultant_detail(request, consultant_id):
     return render(request, 'baseapp/consultant_detail.html', context)
 
 
-
 def scheduleAppointment(request, consultant_id):
     consultant = get_object_or_404(Consultant, id=consultant_id)
 
     if request.method == 'POST':
         form = AppointmentForm(request.POST)
         if form.is_valid():
-            appiontment = form.save(commit=False)
-            appiontment.client = request.user.client
-            appiontment.consultant = consultant
-            appiontment.save()
+            appointment = form.save(commit=False)
+            appointment.client = request.user
+            appointment.consultant = consultant
+            appointment.save()
+
             return redirect('appointment_confirmation')
     else:
         form = AppointmentForm()
     context = {'form' : form, 'consultant' : consultant}
-    return render(request, 'baseapp/shedule_appointment.html', context)
+    return render(request, 'baseapp/schedule_appointment.html', context)
 
 
 def manageAppointments(request):
     appointments = Appointment.objects.filter(client=request.user.client)
     context = {'appiontments' : appointments}
     return render(request, 'baseapp/manage_appiontments.html', context)
-
 
 
 def cancelAppointment(request, appointment_id):
@@ -150,13 +190,11 @@ def cancelAppointment(request, appointment_id):
     return redirect('manage_appiontments')
 
 
-@login_required
 def clientDashboard(request):
     client = request.user.client
     appiontments = Appointment.objects.filter(client=client)
     context = {'client' : client, 'appointments' : appiontments}
     return render(request, 'baseapp/client_dashboard.html', context)
-
 
 
 def sendMessage(request, reciever_id):
