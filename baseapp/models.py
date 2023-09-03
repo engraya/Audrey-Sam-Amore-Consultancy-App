@@ -35,7 +35,7 @@ class Consultant(models.Model):
     address = models.CharField(max_length=40, null=True, blank=True)
     gender = models.CharField(max_length=12, null=True, blank=True, choices=GENDER_CHOICES)
     mobile = models.CharField(max_length=40,null=True, blank=True)
-    department= models.CharField(max_length=50,choices=CONSULTANCY_CATEGORY)
+    consultantcyServiceSpeciality= models.CharField(max_length=50,choices=CONSULTANCY_CATEGORY)
     availability_status=models.BooleanField(default=False)
     specialization = models.CharField(max_length=100, null=True, blank=True)
     facebook = models.URLField(max_length=200, null=True, blank=True)
@@ -56,7 +56,9 @@ class Consultant(models.Model):
 class Client(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE)
     profilePicture = models.ImageField(upload_to='profilePics/', blank=True, null=True)
-    symptoms = models.CharField(max_length=100,null=False)
+    address = models.CharField(max_length=40, null=True, blank=True)
+    gender = models.CharField(max_length=12, null=True, blank=True, choices=GENDER_CHOICES)
+    mobile = models.CharField(max_length=40,null=True, blank=True)
     siteRegisterDate = models.DateField(auto_now=True)
     aaignedConsultantID = models.PositiveIntegerField(null=False)
 

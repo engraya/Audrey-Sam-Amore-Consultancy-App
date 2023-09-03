@@ -2,10 +2,12 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.forms import ModelForm
-from .models import Appointment
+from .models import Consultant, Client, Appointment
 
 
-class UserRegistrationForm(UserCreationForm):
+
+# ADMIN REGISTRATION FORM
+class AdminRegistrationForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['first_name'].widget.attrs.update({'class' : 'form-control', 'placeholder' : 'Enter your First Name'})
@@ -26,6 +28,32 @@ class UserRegistrationForm(UserCreationForm):
         fields = ['first_name', 'last_name', 'username', 'email', 'password1', 'password2']
 
 
+#Consultant related form
+class ConsultantUserForm(forms.ModelForm):
+    class Meta:
+        model=User
+        fields=['first_name','last_name','username','password']
+
+class ConsultantForm(forms.ModelForm):
+    class Meta:
+        model= Consultant
+        fields=['address','mobile','consultantcyServiceSpeciality','availability_status','profilePicture']
+
+#Client User Form
+class ClientUserForm(forms.ModelForm):
+    class Meta:
+        model=User
+        fields=['first_name','last_name','username','password']
+class ClientForm(forms.ModelForm):
+    #this is the extrafield for linking patient and their assigend doctor
+    #this will show dropdown __str__ method doctor model is shown on html so override it
+    #to_field_name this will fetch corresponding value  user_id present in Doctor model and return it
+    assignedConsultantID=forms.ModelChoiceField(queryset=models.Consultant.objects.all().filter(status=True),empty_label="Name and Service Speciality", to_field_name="user_id")
+    class Meta:
+        model= Client
+        fields=['address','mobile','profilePicture']
+
+
 class UserLoginForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -39,13 +67,19 @@ class UserLoginForm(AuthenticationForm):
         fields = '__all__'
 
 
-
 class AppointmentForm(forms.ModelForm):
+    consultantID=forms.ModelChoiceField(queryset=models.Consultant.objects.all().filter(status=True),empty_label="Name and Service Speciality", to_field_name="user_id")
+    clientID=forms.ModelChoiceField(queryset=models.Client.objects.all().filter(status=True),empty_label="Patient Name", to_field_name="user_id")
     class Meta:
         model = Appointment
-        fields = ['notes']
+        fields = ['notes','description','status']
 
 
+#for CONTACT US page
+class ContactusForm(forms.Form):
+    Name = forms.CharField(max_length=30)
+    Email = forms.EmailField()
+    Message = forms.CharField(max_length=500,widget=forms.Textarea(attrs={'rows': 3, 'cols': 30}))
 
 
 class AppointmentRequestForm(forms.Form):
@@ -59,7 +93,6 @@ class AppointmentRequestForm(forms.Form):
         return appointment_date
 
 
-
 class AppointmentResponseForm(forms.ModelForm):
     class Meta:
         model = Appointment
@@ -69,56 +102,3 @@ class MessageForm(forms.Form):
     message = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}))
 
 
-
-#........New Forms...........###
-
-#for admin signup
-class AdminSigupForm(forms.ModelForm):
-    class Meta:
-        model=User
-        fields=['first_name','last_name','username','password']
-
-
-#for student related form
-class DoctorUserForm(forms.ModelForm):
-    class Meta:
-        model=User
-        fields=['first_name','last_name','username','password']
-class DoctorForm(forms.ModelForm):
-    class Meta:
-        model=models.Doctor
-        fields=['address','mobile','department','status','profile_pic']
-
-
-
-#for teacher related form
-class PatientUserForm(forms.ModelForm):
-    class Meta:
-        model=User
-        fields=['first_name','last_name','username','password']
-class PatientForm(forms.ModelForm):
-    #this is the extrafield for linking patient and their assigend doctor
-    #this will show dropdown __str__ method doctor model is shown on html so override it
-    #to_field_name this will fetch corresponding value  user_id present in Doctor model and return it
-    assignedDoctorId=forms.ModelChoiceField(queryset=models.Doctor.objects.all().filter(status=True),empty_label="Name and Department", to_field_name="user_id")
-    class Meta:
-        model=models.Patient
-        fields=['address','mobile','status','symptoms','profile_pic']
-
-
-
-class AppointmentForm(forms.ModelForm):
-    doctorId=forms.ModelChoiceField(queryset=models.Doctor.objects.all().filter(status=True),empty_label="Doctor Name and Department", to_field_name="user_id")
-    patientId=forms.ModelChoiceField(queryset=models.Patient.objects.all().filter(status=True),empty_label="Patient Name and Symptoms", to_field_name="user_id")
-    class Meta:
-        model=models.Appointment
-        fields=['description','status']
-
-
-
-
-#for contact us page
-class ContactusForm(forms.Form):
-    Name = forms.CharField(max_length=30)
-    Email = forms.EmailField()
-    Message = forms.CharField(max_length=500,widget=forms.Textarea(attrs={'rows': 3, 'cols': 30}))
