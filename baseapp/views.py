@@ -1,61 +1,24 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
-from .forms import UserRegistrationForm, UserLoginForm, AppointmentForm, AppointmentRequestForm, AppointmentResponseForm, MessageForm
+from .forms import AdminRegistrationForm, UserLoginForm, AppointmentForm, AppointmentRequestForm, AppointmentResponseForm, MessageForm
 from django.contrib.auth.decorators import login_required
-from .models import ConsultCategories, ConsultancyService, ConsultationRequest, Notification, Message, User, Client, Consultant, Appointment
+from .models import *
+from . import forms, models
+from django.db.models import Sum
+from django.contrib.auth.models import Group
+from django.http import HttpResponseRedirect
+from django.contrib.auth.decorators import login_required, user_passes_test
+from datetime import datetime, timedelta, date
 
 
-#imported
+
 # Create your views here.
 
-    template_name = 'manage_appointments.html'
-    model = MainAppointment
-
-    context_object_name = 'appointments'
-
-    login_required = True
-    paginate_by = 2
-
-
-    def post(self, request):
-        date = request.POST.get("date")
-        appointment_id = request.POST.get("appointment-id")
-
-        appointment = MainAppointment.objects.get(id=appointment_id)
-        appointment.accepted = True
-        appointment.accepted_date = datetime.datetime.now()
-        appointment.save()
-
-        data = {
-            'fname': appointment.first_name,
-            'date': date
-        }
-
-        message = get_template('email.html').render(data)
-
-        email = EmailMessage(
-            "About your appointment",
-            message,
-            settings.EMAIL_HOST_USER,
-            [appointment.email],
-        )
-        email_content_subtype = 'html'
-        email.send()
-
-        messages.add_message(request, messages.SUCCESS, f"You accepted the appointment of {appointment.first_name}")
-        return HttpResponseRedirect(request.path)
-
-
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-        appointments = MainAppointment.objects.all()
-        context.update({'title': 'Manage Appointments'})
-        return context
 
 #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\#####
 def homePage(request):
-    categories = ConsultCategories.objects.all()
+    categories = ConsultancyCategories.objects.all()
     context = {'categories' : categories}
     return render(request, 'baseapp/homePage.html', context)
 

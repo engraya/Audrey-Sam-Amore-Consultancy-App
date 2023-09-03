@@ -1,14 +1,12 @@
 from django.contrib import admin
-from .models import Consultant, Client, ConsultancyService, Appointment, ConsultationRequest, Message, Notification, ClientDischargeDetails, ClientPrescription
+from .models import Consultant, ConsultancyCategories, Client, ConsultancyService, Appointment, ConsultationRequest, Message, Notification, ClientDischargeDetails, ClientPrescription
 # Register your models here.
 
 admin.site.register(ConsultationRequest)
 admin.site.register(ConsultancyService)
 admin.site.register(Notification)
 admin.site.register(Message)
-admin.site.register(Client)
-admin.site.register(Consultant)
-admin.site.register(Appointment)
+admin.site.register(ConsultancyCategories)
 
 
 
@@ -31,5 +29,5 @@ admin.site.register(Appointment, AppointmentAdmin)
 
 class CientDischargeDetailsAdmin(admin.ModelAdmin):
     pass
-admin.site.register(ClientDischargeDetails, ClientDischargeDetailsAdmin)
+admin.site.register(ClientDischargeDetails, CientDischargeDetailsAdmin)
 admin.site.register(ClientPrescription)

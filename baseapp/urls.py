@@ -48,8 +48,8 @@ urlpatterns = [
 
 
 
-    path('book_appointment/', views.AppointmentTemplateView.as_view(), name='book'),
-    path('manage-appointments/', views.ManageAppointmentTemplateView.as_view(), name='manage'),
+    # path('book_appointment/', views.AppointmentTemplateView.as_view(), name='book'),
+    # path('manage-appointments/', views.ManageAppointmentTemplateView.as_view(), name='manage'),
 
 
 
@@ -60,10 +60,7 @@ urlpatterns = [
     # path('get_notifications_message_count/', views.notificationsMessageCount, name='get_notifications_message_count'),
     # path('loadMessages/<str:recipient_username>/', views.loadMessages, name='loadMessages'),
 
-
-
-
-    
+   
 
 ]
 

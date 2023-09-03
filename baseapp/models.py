@@ -9,6 +9,14 @@ from datetime import datetime
 
 #.............................New Models.....................#####
 
+
+class ConsultancyCategories(models.Model):
+    title = models.CharField(max_length=200)
+
+
+    def __str__(self):
+        return self.title
+
 CONSULTANCY_CATEGORY=[('Dating','Dating'),
 ('Relationships','Relationships'),
 ('Breakups','Breakups'),
@@ -30,7 +38,7 @@ APPIONTMENT_REQUEST_CATEGORY=[('Dating','Dating'),
 ('Business','Business'),
 ]
 class Consultant(models.Model):
-    user=models.OneToOneField(User,on_delete=models.CASCADE)
+    user=models.OneToOneField(User,on_delete=models.CASCADE, related_name='consultant_user')
     profilePicture = models.ImageField(upload_to='profilePics/', blank=True, null=True)
     address = models.CharField(max_length=40, null=True, blank=True)
     gender = models.CharField(max_length=12, null=True, blank=True, choices=GENDER_CHOICES)
@@ -48,19 +56,19 @@ class Consultant(models.Model):
     @property
     def get_id(self):
         return self.user.id
-    def __str__(self):
-        return "{} ({})".format(self.user.first_name,self.department)
+
 
 
 
 class Client(models.Model):
-    user=models.OneToOneField(User,on_delete=models.CASCADE)
+    user=models.OneToOneField(User,on_delete=models.CASCADE, related_name='client_user')
     profilePicture = models.ImageField(upload_to='profilePics/', blank=True, null=True)
     address = models.CharField(max_length=40, null=True, blank=True)
     gender = models.CharField(max_length=12, null=True, blank=True, choices=GENDER_CHOICES)
     mobile = models.CharField(max_length=40,null=True, blank=True)
     siteRegisterDate = models.DateField(auto_now=True)
-    aaignedConsultantID = models.PositiveIntegerField(null=False)
+    status=models.BooleanField(default=False)
+    assignedConsultantID = models.PositiveIntegerField(null=False)
 
     @property
     def get_name(self):
@@ -103,8 +111,8 @@ class ConsultationRequest(models.Model):
         ('declined', 'Declined')
     )
     
-    consultant = models.ForeignKey(User, on_delete=models.CASCADE, related_name='consultant')
-    client = models.ForeignKey(User, on_delete=models.CASCADE, related_name='client')
+    consultant = models.ForeignKey(User, on_delete=models.CASCADE, related_name='request_consultant')
+    client = models.ForeignKey(User, on_delete=models.CASCADE, related_name='request_client')
     service = models.ForeignKey(ConsultancyService, on_delete=models.CASCADE)
     requestMesssage = models.TextField()
     requestStatus = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
@@ -132,7 +140,6 @@ class Notification(models.Model):
 
     def __str__(self):
         return f'{self.user} : {self.message}'
-
 
 
 

@@ -48,7 +48,7 @@ class ClientForm(forms.ModelForm):
     #this is the extrafield for linking patient and their assigend doctor
     #this will show dropdown __str__ method doctor model is shown on html so override it
     #to_field_name this will fetch corresponding value  user_id present in Doctor model and return it
-    assignedConsultantID=forms.ModelChoiceField(queryset=models.Consultant.objects.all().filter(status=True),empty_label="Name and Service Speciality", to_field_name="user_id")
+    assignedConsultantID=forms.ModelChoiceField(queryset=Consultant.objects.all().filter(availability_status=True),empty_label="Name and Service Speciality", to_field_name="user_id")
     class Meta:
         model= Client
         fields=['address','mobile','profilePicture']
@@ -68,8 +68,8 @@ class UserLoginForm(AuthenticationForm):
 
 
 class AppointmentForm(forms.ModelForm):
-    consultantID=forms.ModelChoiceField(queryset=models.Consultant.objects.all().filter(status=True),empty_label="Name and Service Speciality", to_field_name="user_id")
-    clientID=forms.ModelChoiceField(queryset=models.Client.objects.all().filter(status=True),empty_label="Patient Name", to_field_name="user_id")
+    consultantID=forms.ModelChoiceField(queryset=Consultant.objects.all().filter(availability_status=True),empty_label="Name and Service Speciality", to_field_name="user_id")
+    clientID=forms.ModelChoiceField(queryset=Client.objects.all().filter(status=True),empty_label="Patient Name", to_field_name="user_id")
     class Meta:
         model = Appointment
         fields = ['notes','description','status']
