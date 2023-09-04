@@ -59,19 +59,6 @@
               <li><a class="nav-link scrollto" href="/adminclick">Admin</a></li>
               <li><a class="nav-link scrollto" href="/consultantclick">Consultant</a></li>
               <li><a class="nav-link scrollto" href="/clientclick">Client</a></li>
-              <li><a class="nav-link scrollto" href="{% url 'consultants' %}">Consultants</a></li>
-              <li><a class="nav-link scrollto" href="{% url 'consultation_request' %}">Consultation Requests</a></li>
-              <li><a class="nav-link scrollto " href="{% url 'inbox' %}">Inbox</a></li>
-              <li><a class="nav-link scrollto" href="{% url 'notifications' %}">Notifications</a></li>
-  
-              {% if user.is_authenticated %}
-
-              <a href="{% url 'logout' %}"><button class="btn btn-danger">Logout</button></a>
-
-
-              {% endif %}
-  
-     
             </ul>
 
      

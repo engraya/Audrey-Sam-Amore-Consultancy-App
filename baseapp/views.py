@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponseRedirect
 from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
 from .forms import AdminRegistrationForm, UserLoginForm, AppointmentForm, AppointmentRequestForm, AppointmentResponseForm, MessageForm
@@ -7,7 +8,6 @@ from .models import *
 from . import forms, models
 from django.db.models import Sum
 from django.contrib.auth.models import Group
-from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from datetime import datetime, timedelta, date
 
@@ -16,38 +16,35 @@ from datetime import datetime, timedelta, date
 # Create your views here.
 
 
-
 #BASE PRELOGIN VIEWS
 def home_view(request):
     if request.user.is_authenticated:
-        return render('afterlogin')
-    return render(request,'hospital/homePage.html')
+        return HttpResponseRedirect('afterlogin')
+    return render(request,'baseapp/homePage.html')
 
 
 #for showing signup/login button for admin(by sumit)
 def adminclick_view(request):
     if request.user.is_authenticated:
-        return render('afterlogin')
+        return HttpResponseRedirect('afterlogin')
     return render(request,'baseapp/adminclick.html')
 
 
 #for showing signup/login button for doctor(by sumit)
 def consultantclick_view(request):
     if request.user.is_authenticated:
-        return render('afterlogin')
+        return HttpResponseRedirect('afterlogin')
     return render(request,'baseapp/consultantclick.html')
 
 
 #for showing signup/login button for patient(by sumit)
 def clientclick_view(request):
     if request.user.is_authenticated:
-        return render('afterlogin')
+        return HttpResponseRedirect('afterlogin')
     return render(request,'baseapp/clientclick.html')
 
 
 #-------------Registration Views--------#
-
-
 def admin_signup_view(request):
     form=forms.AdminRegistrationForm()
     if request.method=='POST':
@@ -58,7 +55,7 @@ def admin_signup_view(request):
             user.save()
             my_admin_group = Group.objects.get_or_create(name='ADMIN')
             my_admin_group[0].user_set.add(user)
-            return redirect('adminlogin')
+            return HttpResponseRedirect('adminlogin')
     return render(request,'baseapp/adminsignup.html',{'form':form})
 
 
@@ -66,43 +63,32 @@ def admin_signup_view(request):
 
 def consultant_signup_view(request):
     userForm=forms.ConsultantUserForm()
-    consultantForm=forms.ConsultantForm()
-    context = {'userForm':userForm,'consltantForm':consultantForm}
+    context = {'userForm':userForm}
     if request.method=='POST':
         userForm=forms.ConsultantUserForm(request.POST)
-        consultantForm=forms.ConsultantForm(request.POST,request.FILES)
-        if userForm.is_valid() and consultantForm.is_valid():
+        if userForm.is_valid():
             user=userForm.save()
             user.set_password(user.password)
             user.save()
-            consultant = consultantForm.save(commit=False)
-            consultant.user=user
-            consultant = consultant.save()
             my_consultant_group = Group.objects.get_or_create(name='DOCTOR')
             my_consultant_group[0].user_set.add(user)
-        return redirect('cosultantlogin')
+        return HttpResponseRedirect('cosultantlogin')
     return render(request,'baseapp/consultantsignup.html', context)
 
 
 
 def client_signup_view(request):
     userForm=forms.ClientUserForm()
-    clientForm=forms.ClientForm()
-    context = {'userForm' : userForm,'clientForm' : clientForm}
+    context = {'userForm' : userForm}
     if request.method=='POST':
         userForm = forms.ClientUserForm(request.POST)
-        clientForm = forms.ClientForm(request.POST,request.FILES)
-        if userForm.is_valid() and clientForm.is_valid():
+        if userForm.is_valid():
             user=userForm.save()
             user.set_password(user.password)
             user.save()
-            client=clientForm.save(commit=False)
-            client.user=user
-            client.assignedConsultantID=request.POST.get('assignedConsultantID')
-            client=client.save()
             my_client_group = Group.objects.get_or_create(name='CLIENT')
             my_client_group[0].user_set.add(user)
-        return redirect('clientlogin')
+        return HttpResponseRedirect('clientlogin')
     return render(request,'baseapp/clientsignup.html', context)
 
 

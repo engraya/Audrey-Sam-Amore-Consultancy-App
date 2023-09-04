@@ -61,9 +61,9 @@ urlpatterns = [
     # path('loadMessages/<str:recipient_username>/', views.loadMessages, name='loadMessages'),
 
     
-    path('adminclick', views.adminclick_view),
-    path('doctorclick', views.consultantclick_view),
-    path('patientclick', views.clientclick_view),
+    path('adminclick', views.adminclick_view, name="adminclick"),
+    path('consultantclick', views.consultantclick_view, name="consultantclick"),
+    path('clientclick', views.clientclick_view, name="clientclick"),
 
 
     path('adminsignup', views.admin_signup_view),
@@ -76,7 +76,7 @@ urlpatterns = [
 
 
     path('afterlogin', views.afterlogin_view,name='afterlogin'),
-    path('logout', LogoutView.as_view(template_name='baseapp/index.html'),name='logout'),
+    path('logout', LogoutView.as_view(template_name='baseapp/homePage.html'),name='logout'),
 
    
 

@@ -1,106 +1,65 @@
-<!DOCTYPE html>
+{% extends 'baseapp/prebase.html' %}
 
-{% load widget_tweaks %}
-<html lang="en" dir="ltr">
-
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>AdminSignup || E-Doctor</title>
-  <style type="text/css">
-    body {
-      color: #aa082e;
-      background-color: #b6bde7;
-      font-family: 'Roboto', sans-serif;
-    }
-
-    a:link {
-      text-decoration: none;
-    }
-
-    .note {
-      text-align: center;
-      height: 80px;
-      background: -webkit-linear-gradient(left, #0072ff, #8811c5);
-      color: #fff;
-      font-weight: bold;
-      line-height: 80px;
-    }
-
-    .form-content {
-      padding: 5%;
-      border: 1px solid #ced4da;
-      margin-bottom: 2%;
-    }
-
-    .form-control {
-      border-radius: 1.5rem;
-    }
-
-    .btnSubmit {
-      border: none;
-      border-radius: 1.5rem;
-      padding: 1%;
-      width: 20%;
-      cursor: pointer;
-      background: #0062cc;
-      color: #fff;
-    }
-  </style>
-
-</head>
+{% load static %}
 
 
-<body>
-  {% include "hospital/navbar.html" %}
-  <br>
-  <br>
-  <br>
-  <br>
+{% block content %}
 
+<div class="d-lg-flex half">
+  <div class="bg order-1 order-md-2" style="background-image: url('{% static 'images/register.jpg' %}');"></div>
+  <div class="contents order-2 order-md-1">
 
-
-
-  <!--- signup page for admin by admin(sumit)  ---------->
-  <form method="post">
-    {% csrf_token %}
-    <div class="container register-form">
-      <div class="form">
-        <div class="note">
-          <p>Add New Admin To Hospital</p>
-        </div>
-
-        <div class="form-content">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                {% render_field form.first_name class="form-control" placeholder="First Name" %}
+    <div class="container my-4">
+      <div class="row align-items-center justify-content-center">
+        <div class="col-md-8">
+          <h3>Register as <strong>Admin</strong></h3>
+          <form method="POST">
+              {% csrf_token %}
+              <div class="form-group first">
+                  <label for="first_name">First Name</label>
+                  <!-- <input type="text" class="form-control" placeholder="Enter your First Name" id="first_name"> -->
+                  {{form.first_name}}
               </div>
-              <div class="form-group">
-                {% render_field form.username class="form-control" placeholder="Username" %}
+              <div class="form-group first">
+                  <label for="last_name">Last Name</label>
+                  <!-- <input type="text" class="form-control" placeholder="Enter your Last Name" id="last_name"> -->
+                  {{form.last_name}}
               </div>
-
+            <div class="form-group first">
+              <label for="username">Username</label>
+              <!-- <input type="text" class="form-control" placeholder="Enter your Username" id="username"> -->
+                  {{form.username}}
             </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                {% render_field form.last_name class="form-control" placeholder="Last Name" %}
-              </div>
-              <div class="form-group">
-                {% render_field form.password class="form-control" placeholder="Password" %}
-              </div>
-
+            <div class="form-group first">
+              <label for="email">Email</label>
+              <!-- <input type="email" class="form-control" placeholder="Enter your Email" id="email"> -->
+                  {{form.email}}
             </div>
-          </div>
-          <button type="submit" class="btnSubmit">Submit</button>
-          <div class="text-center">Already have an account? <a href="adminlogin">Login here</a></div>
+            <div class="form-group last mb-3">
+              <label for="password1">Password</label>
+              <!-- <input type="password" class="form-control" placeholder="Enter Your Password" id="password1"> -->
+                  {{form.password1}}
+            </div>
+            <div class="form-group last mb-3">
+              <label for="password">Confirm Password</label>
+              <!-- <input type="password2" class="form-control" placeholder="Confirm Your Password" id="password2"> -->
+                  {{form.password2}}
+            </div>
+            <div class="d-flex mb-5 align-items-center">
+              <label class="control control--checkbox mb-0"><span class="caption">Already have an account?  <a href="adminlogin">Sign In</a>  </span>
+              </label> 
+            </div>
+
+            <input type="submit" value="Register" class="btn btn-block btn-primary">
+
+          </form>
         </div>
       </div>
     </div>
+  </div>
 
-  </form>
   
-
-  {% include "hospital/footer.html" %}
-</body>
-
-</html>
+</div>
+  
+{% endblock content %}
+  
