@@ -16,54 +16,178 @@ from datetime import datetime, timedelta, date
 # Create your views here.
 
 
+
+#BASE PRELOGIN VIEWS
+def home_view(request):
+    if request.user.is_authenticated:
+        return render('afterlogin')
+    return render(request,'hospital/homePage.html')
+
+
+#for showing signup/login button for admin(by sumit)
+def adminclick_view(request):
+    if request.user.is_authenticated:
+        return render('afterlogin')
+    return render(request,'baseapp/adminclick.html')
+
+
+#for showing signup/login button for doctor(by sumit)
+def consultantclick_view(request):
+    if request.user.is_authenticated:
+        return render('afterlogin')
+    return render(request,'baseapp/consultantclick.html')
+
+
+#for showing signup/login button for patient(by sumit)
+def clientclick_view(request):
+    if request.user.is_authenticated:
+        return render('afterlogin')
+    return render(request,'baseapp/clientclick.html')
+
+
+#-------------Registration Views--------#
+
+
+def admin_signup_view(request):
+    form=forms.AdminRegistrationForm()
+    if request.method=='POST':
+        form=forms.AdminRegistrationForm(request.POST)
+        if form.is_valid():
+            user=form.save()
+            user.set_password(user.password)
+            user.save()
+            my_admin_group = Group.objects.get_or_create(name='ADMIN')
+            my_admin_group[0].user_set.add(user)
+            return redirect('adminlogin')
+    return render(request,'baseapp/adminsignup.html',{'form':form})
+
+
+
+
+def consultant_signup_view(request):
+    userForm=forms.ConsultantUserForm()
+    consultantForm=forms.ConsultantForm()
+    context = {'userForm':userForm,'consltantForm':consultantForm}
+    if request.method=='POST':
+        userForm=forms.ConsultantUserForm(request.POST)
+        consultantForm=forms.ConsultantForm(request.POST,request.FILES)
+        if userForm.is_valid() and consultantForm.is_valid():
+            user=userForm.save()
+            user.set_password(user.password)
+            user.save()
+            consultant = consultantForm.save(commit=False)
+            consultant.user=user
+            consultant = consultant.save()
+            my_consultant_group = Group.objects.get_or_create(name='DOCTOR')
+            my_consultant_group[0].user_set.add(user)
+        return redirect('cosultantlogin')
+    return render(request,'baseapp/consultantsignup.html', context)
+
+
+
+def client_signup_view(request):
+    userForm=forms.ClientUserForm()
+    clientForm=forms.ClientForm()
+    context = {'userForm' : userForm,'clientForm' : clientForm}
+    if request.method=='POST':
+        userForm = forms.ClientUserForm(request.POST)
+        clientForm = forms.ClientForm(request.POST,request.FILES)
+        if userForm.is_valid() and clientForm.is_valid():
+            user=userForm.save()
+            user.set_password(user.password)
+            user.save()
+            client=clientForm.save(commit=False)
+            client.user=user
+            client.assignedConsultantID=request.POST.get('assignedConsultantID')
+            client=client.save()
+            my_client_group = Group.objects.get_or_create(name='CLIENT')
+            my_client_group[0].user_set.add(user)
+        return redirect('clientlogin')
+    return render(request,'baseapp/clientsignup.html', context)
+
+
+
+
+
+#-----------for checking user is doctor , patient or admin(by sumit)
+def is_admin(user):
+    return user.groups.filter(name='ADMIN').exists()
+def is_consultant(user):
+    return user.groups.filter(name='CONSULTANT').exists()
+def is_client(user):
+    return user.groups.filter(name='CLIENT').exists()
+
+
+
+#---------AFTER ENTERING CREDENTIALS WE CHECK WHETHER USERNAME AND PASSWORD IS OF ADMIN,DOCTOR OR PATIENT
+def afterlogin_view(request):
+    if is_admin(request.user):
+        return redirect('admin-dashboard')
+    elif is_consultant(request.user):
+        accountapproval=models.Consultant.objects.all().filter(user_id=request.user.id,status=True)
+        if accountapproval:
+            return redirect('consultant-dashboard')
+        else:
+            return render(request,'baseapp/consultant_wait_for_approval.html')
+    elif is_client(request.user):
+        accountapproval=models.Client.objects.all().filter(user_id=request.user.id,status=True)
+        if accountapproval:
+            return redirect('client-dashboard')
+        else:
+            return render(request,'baseapp/client_wait_for_approval.html')
+
+
+
+
+
 #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\#####
 def homePage(request):
     categories = ConsultancyCategories.objects.all()
     context = {'categories' : categories}
     return render(request, 'baseapp/homePage.html', context)
 
-def signUp(request):
-    if request.method == 'POST':
-        form = UserRegistrationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "User Registration Succesful...")
-            return redirect("home")
-        else:
-            messages.error(request, "Registration Unsuccessful, Invalid Credentials Entered!!")
-    else:
-        form = UserRegistrationForm()
+# def signUp(request):
+#     if request.method == 'POST':
+#         form = UserRegistrationForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             messages.success(request, "User Registration Succesful...")
+#             return redirect("home")
+#         else:
+#             messages.error(request, "Registration Unsuccessful, Invalid Credentials Entered!!")
+#     else:
+#         form = UserRegistrationForm()
 
-    context = {'form' : form}
-    return render(request, 'accounts/registerPage.html', context)
+#     context = {'form' : form}
+#     return render(request, 'accounts/registerPage.html', context)
 
 
-def signIn(request):
-    if request.method == 'POST':
-        form = UserLoginForm(request, request.POST)
-        if form.is_valid():
-            username = request.POST['username']
-            password = request.POST['password']
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                login(request, user)
-                messages.info(request, "Congratulations, you are now logged in....")
-                return redirect("home")
-            else:
-                messages.error(request, "Invalid Credentials Entered..Try again Later!!")
+# def signIn(request):
+#     if request.method == 'POST':
+#         form = UserLoginForm(request, request.POST)
+#         if form.is_valid():
+#             username = request.POST['username']
+#             password = request.POST['password']
+#             user = authenticate(username=username, password=password)
+#             if user is not None:
+#                 login(request, user)
+#                 messages.info(request, "Congratulations, you are now logged in....")
+#                 return redirect("home")
+#             else:
+#                 messages.error(request, "Invalid Credentials Entered..Try again Later!!")
 
-        else:
-            messages.error(request, "Invalid Username or Password used....Try again Later!!!")
-    else:
-        form = UserLoginForm()
-    context = {'form' : form}
-    return render(request, 'accounts/loginPage.html', context)
+#         else:
+#             messages.error(request, "Invalid Username or Password used....Try again Later!!!")
+#     else:
+#         form = UserLoginForm()
+#     context = {'form' : form}
+#     return render(request, 'accounts/loginPage.html', context)
 
       
-def signOut(request):
-    logout(request)
-    messages.info(request, "Successfully Logged out!!")
-    return redirect("login")
+# def signOut(request):
+#     logout(request)
+#     messages.info(request, "Successfully Logged out!!")
+#     return redirect("login")
 
 
 def profile(request, username):

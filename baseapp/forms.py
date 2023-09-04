@@ -37,7 +37,7 @@ class ConsultantUserForm(forms.ModelForm):
 class ConsultantForm(forms.ModelForm):
     class Meta:
         model= Consultant
-        fields=['address','mobile','consultantcyServiceSpeciality','availability_status','profilePicture']
+        fields=['address','mobile','consultantcyServiceSpeciality','availability_status']
 
 #Client User Form
 class ClientUserForm(forms.ModelForm):

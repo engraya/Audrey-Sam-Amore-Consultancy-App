@@ -1,13 +1,13 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
+from django.contrib.auth.views import LoginView, LogoutView
 
 
 urlpatterns = [
-    path('', views.homePage, name='home'),
-    path('signUp', views.signUp, name='register'),
-    path('signIn', views.signIn, name='login'),
-    path('signOut', views.signOut, name='logout'),
+
+    path('',views.home_view,name='home'),
+
     
     path('profile/<str:username>', views.profile, name="profile"),
 
@@ -59,6 +59,24 @@ urlpatterns = [
     # path('send_message/', views.sendMessage, name='sendMessage'),
     # path('get_notifications_message_count/', views.notificationsMessageCount, name='get_notifications_message_count'),
     # path('loadMessages/<str:recipient_username>/', views.loadMessages, name='loadMessages'),
+
+    
+    path('adminclick', views.adminclick_view),
+    path('doctorclick', views.consultantclick_view),
+    path('patientclick', views.clientclick_view),
+
+
+    path('adminsignup', views.admin_signup_view),
+    path('consultantsignup', views.consultant_signup_view,name='consultantsignup'),
+    path('clientsignup', views.client_signup_view),
+    path('adminlogin', LoginView.as_view(template_name='baseapp/adminlogin.html')),
+    path('consultantlogin', LoginView.as_view(template_name='baseapp/consultantlogin.html')),
+    path('clientlogin', LoginView.as_view(template_name='baseapp/clientlogin.html')),
+
+
+
+    path('afterlogin', views.afterlogin_view,name='afterlogin'),
+    path('logout', LogoutView.as_view(template_name='baseapp/index.html'),name='logout'),
 
    
 
