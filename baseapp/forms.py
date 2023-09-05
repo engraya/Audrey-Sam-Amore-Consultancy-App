@@ -7,25 +7,25 @@ from .models import Consultant, Client, Appointment
 
 
 # ADMIN REGISTRATION FORM
-class AdminRegistrationForm(UserCreationForm):
+class AdminRegistrationForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['first_name'].widget.attrs.update({'class' : 'form-control', 'placeholder' : 'Enter your First Name'})
         self.fields['last_name'].widget.attrs.update({'class' : 'form-control', 'placeholder' : 'Enter your Last Name'})
         self.fields['username'].widget.attrs.update({'class' : 'form-control', 'placeholder' : 'Enter your Username'})
         self.fields['email'].widget.attrs.update({'class' : 'form-control', 'placeholder' : 'Enter your Email'})
-        self.fields['password1'].widget.attrs.update({'class' : 'form-control', 'placeholder' : 'Enter your Password'})
-        self.fields['password2'].widget.attrs.update({'class' : 'form-control', 'placeholder' : 'Confirm your Password'})
+        self.fields['password'].widget.attrs.update({'class' : 'form-control', 'placeholder' : 'Enter your Password'})
+
 
     first_name = forms.CharField(max_length=150)
     last_name = forms.CharField(max_length=150)
     username = forms.CharField(max_length=150)
     email = forms.EmailField(max_length=150)
-    password1 = forms.CharField(widget=forms.PasswordInput)
-    password2 = forms.CharField(widget=forms.PasswordInput)
+    password = forms.CharField(widget=forms.PasswordInput)
+
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'username', 'email', 'password1', 'password2']
+        fields = ['first_name', 'last_name', 'username', 'email', 'password']
 
 
 #Consultant related form
@@ -36,8 +36,8 @@ class ConsultantUserForm(forms.ModelForm):
         self.fields['last_name'].widget.attrs.update({'class' : 'form-control', 'placeholder' : 'Enter your Last Name'})
         self.fields['username'].widget.attrs.update({'class' : 'form-control', 'placeholder' : 'Enter your Username'})
         self.fields['email'].widget.attrs.update({'class' : 'form-control', 'placeholder' : 'Enter your Email'})
-        self.fields['password1'].widget.attrs.update({'class' : 'form-control', 'placeholder' : 'Enter your Password'})
-        self.fields['password2'].widget.attrs.update({'class' : 'form-control', 'placeholder' : 'Confirm your Password'})
+        self.fields['password'].widget.attrs.update({'class' : 'form-control', 'placeholder' : 'Enter your Password'})
+
 
 
 
@@ -45,11 +45,11 @@ class ConsultantUserForm(forms.ModelForm):
     last_name = forms.CharField(max_length=150)
     username = forms.CharField(max_length=150)
     email = forms.EmailField(max_length=150)
-    password1 = forms.CharField(widget=forms.PasswordInput)
-    password2 = forms.CharField(widget=forms.PasswordInput)
+    password = forms.CharField(widget=forms.PasswordInput)
+
     class Meta:
         model = User
-        fields=['first_name','last_name','email', 'username','password1', 'password2']
+        fields=['first_name','last_name','email', 'username','password']
 
 class ConsultantForm(forms.ModelForm):
     class Meta:
@@ -64,16 +64,15 @@ class ClientUserForm(forms.ModelForm):
         self.fields['last_name'].widget.attrs.update({'class' : 'form-control', 'placeholder' : 'Enter your Last Name'})
         self.fields['username'].widget.attrs.update({'class' : 'form-control', 'placeholder' : 'Enter your Username'})
         self.fields['email'].widget.attrs.update({'class' : 'form-control', 'placeholder' : 'Enter your Email'})
-        self.fields['password1'].widget.attrs.update({'class' : 'form-control', 'placeholder' : 'Enter your Password'})
-        self.fields['password2'].widget.attrs.update({'class' : 'form-control', 'placeholder' : 'Confirm your Password'})
+        self.fields['password'].widget.attrs.update({'class' : 'form-control', 'placeholder' : 'Enter your Password'})
 
         
     first_name = forms.CharField(max_length=150)
     last_name = forms.CharField(max_length=150)
     username = forms.CharField(max_length=150)
     email = forms.EmailField(max_length=150)
-    password1 = forms.CharField(widget=forms.PasswordInput)
-    password2 = forms.CharField(widget=forms.PasswordInput)
+    password = forms.CharField(widget=forms.PasswordInput)
+
     class Meta:
         model=User
         fields=['first_name','last_name','username','password']
@@ -102,7 +101,7 @@ class UserLoginForm(AuthenticationForm):
 
 class AppointmentForm(forms.ModelForm):
     consultantID=forms.ModelChoiceField(queryset=Consultant.objects.all().filter(availability_status=True),empty_label="Name and Service Speciality", to_field_name="user_id")
-    clientID=forms.ModelChoiceField(queryset=Client.objects.all().filter(status=True),empty_label="Patient Name", to_field_name="user_id")
+    clientID=forms.ModelChoiceField(queryset=Client.objects.all().filter(availability_status=True),empty_label="Patient Name", to_field_name="user_id")
     class Meta:
         model = Appointment
         fields = ['notes','description','status']

@@ -63,6 +63,7 @@ class Client(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE, related_name='client_user')
     profilePicture = models.ImageField(upload_to='profilePics/', blank=True, null=True)
     email = models.EmailField(max_length=200, null=True, blank=True)
+    availability_status=models.BooleanField(default=False)
     gender = models.CharField(max_length=12, null=True, blank=True, choices=GENDER_CHOICES)
     siteRegisterDate = models.DateField(auto_now=True)
     status=models.BooleanField(default=False)

@@ -9,7 +9,6 @@ urlpatterns = [
     path('',views.home_view,name='home'),
 
     
-    path('profile/<str:username>', views.profile, name="profile"),
 
         #password Reset urls
     path('reset_password/', auth_views.PasswordResetView.as_view(template_name="network/passwordManage/password_reset_form.html"), name="reset_password"),
@@ -77,6 +76,13 @@ urlpatterns = [
 
     path('afterlogin', views.afterlogin_view,name='afterlogin'),
     path('logout', LogoutView.as_view(template_name='baseapp/homePage.html'),name='logout'),
+
+
+    #---------FOR DASHBOARD RELATED URLS-------------------------------------####
+    
+    path('admin-dashboard', views.admin_dashboard_view,name='admin-dashboard'),
+    path('doctor-dashboard', views.consultant_dashboard_view,name='consultant-dashboard'),
+    path('patient-dashboard', views.client_dashboard_view,name='client-dashboard'),
 
    
 

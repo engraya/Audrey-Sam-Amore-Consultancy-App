@@ -47,6 +47,7 @@ def clientclick_view(request):
 #-------------Registration Views--------#
 def admin_signup_view(request):
     form=forms.AdminRegistrationForm()
+    context = {'form': form}
     if request.method=='POST':
         form=forms.AdminRegistrationForm(request.POST)
         if form.is_valid():
@@ -56,7 +57,7 @@ def admin_signup_view(request):
             my_admin_group = Group.objects.get_or_create(name='ADMIN')
             my_admin_group[0].user_set.add(user)
             return HttpResponseRedirect('adminlogin')
-    return render(request,'baseapp/adminsignup.html',{'form':form})
+    return render(request,'baseapp/adminsignup.html', context)
 
 
 
@@ -70,9 +71,9 @@ def consultant_signup_view(request):
             user=userForm.save()
             user.set_password(user.password)
             user.save()
-            my_consultant_group = Group.objects.get_or_create(name='DOCTOR')
+            my_consultant_group = Group.objects.get_or_create(name='CONSULTANT')
             my_consultant_group[0].user_set.add(user)
-        return HttpResponseRedirect('cosultantlogin')
+        return HttpResponseRedirect('consultantlogin')
     return render(request,'baseapp/consultantsignup.html', context)
 
 
@@ -95,7 +96,7 @@ def client_signup_view(request):
 
 
 
-#-----------for checking user is doctor , patient or admin(by sumit)
+#-----------for checking user is CONSULTANT , CLIENT or admin(by sumit)
 def is_admin(user):
     return user.groups.filter(name='ADMIN').exists()
 def is_consultant(user):
@@ -105,12 +106,12 @@ def is_client(user):
 
 
 
-#---------AFTER ENTERING CREDENTIALS WE CHECK WHETHER USERNAME AND PASSWORD IS OF ADMIN,DOCTOR OR PATIENT
+#---------AFTER ENTERING CREDENTIALS WE CHECK WHETHER USERNAME AND PASSWORD IS OF ADMIN,CONSULTANT OR CLIENT
 def afterlogin_view(request):
     if is_admin(request.user):
         return redirect('admin-dashboard')
     elif is_consultant(request.user):
-        accountapproval=models.Consultant.objects.all().filter(user_id=request.user.id,status=True)
+        accountapproval=models.Consultant.objects.all().filter(user_id=request.user.id,availability_status=True)
         if accountapproval:
             return redirect('consultant-dashboard')
         else:
@@ -124,6 +125,107 @@ def afterlogin_view(request):
 
 
 
+#---------------------------------------------------------------------------------
+#------------------------ ADMIN RELATED VIEWS START ------------------------------
+#---------------------------------------------------------------------------------
+
+def admin_dashboard_view(request):
+    #for both table in admin dashboard
+    # consultants=models.Consultant.objects.all().order_by('-id')
+    # clients=models.Client.objects.all().order_by('-id')
+    # #for three cards
+    # consultantcount=models.Consultant.objects.all().filter(status=True).count()
+    # pendingconsultantcount=models.Consultant.objects.all().filter(status=False).count()
+
+    # patientcount=models.Client.objects.all().filter(status=True).count()
+    # pendingclientcount=models.Client.objects.all().filter(status=False).count()
+
+    # appointmentcount=models.Appointment.objects.all().filter(status=True).count()
+    # pendingappointmentcount=models.Appointment.objects.all().filter(status=False).count()
+    # mydict={
+    # 'doctors':doctors,
+    # 'patients':patients,
+    # 'doctorcount':doctorcount,
+    # 'pendingdoctorcount':pendingdoctorcount,
+    # 'patientcount':patientcount,
+    # 'pendingpatientcount':pendingpatientcount,
+    # 'appointmentcount':appointmentcount,
+    # 'pendingappointmentcount':pendingappointmentcount,
+    # }
+    return render(request,'baseapp/admin_dashboard.html')
+
+
+
+
+
+#---------------------------------------------------------------------------------
+#------------------------ DOCTOR RELATED VIEWS START ------------------------------
+#---------------------------------------------------------------------------------
+
+def consultant_dashboard_view(request):
+    #for three cards
+    # patientcount=models.Patient.objects.all().filter(status=True,assignedDoctorId=request.user.id).count()
+    # appointmentcount=models.Appointment.objects.all().filter(status=True,doctorId=request.user.id).count()
+    # patientdischarged=models.PatientDischargeDetails.objects.all().distinct().filter(assignedDoctorName=request.user.first_name).count()
+
+    # #for  table in doctor dashboard
+    # appointments=models.Appointment.objects.all().filter(status=True,doctorId=request.user.id).order_by('-id')
+    # patientid=[]
+    # for a in appointments:
+    #     patientid.append(a.patientId)
+    # patients=models.Patient.objects.all().filter(status=True,user_id__in=patientid).order_by('-id')
+    # appointments=zip(appointments,patients)
+    # mydict={
+    # 'patientcount':patientcount,
+    # 'appointmentcount':appointmentcount,
+    # 'patientdischarged':patientdischarged,
+    # 'appointments':appointments,
+    # 'doctor':models.Doctor.objects.get(user_id=request.user.id), #for profile picture of doctor in sidebar
+    # }
+    return render(request,'baseapp/consultant_dashboard.html',)
+
+
+
+
+
+
+
+
+
+
+
+
+
+#---------------------------------------------------------------------------------
+#------------------------ CLIENT RELATED VIEWS START ------------------------------
+#---------------------------------------------------------------------------------
+
+def client_dashboard_view(request):
+    # patient=models.Patient.objects.get(user_id=request.user.id)
+    # doctor=models.Doctor.objects.get(user_id=patient.assignedDoctorId)
+    # mydict={
+    # 'patient':patient,
+    # 'doctorName':doctor.get_name,
+    # 'doctorMobile':doctor.mobile,
+    # 'doctorAddress':doctor.address,
+    # 'symptoms':patient.symptoms,
+    # 'doctorDepartment':doctor.department,
+    # 'admitDate':patient.admitDate,
+    # }
+    return render(request,'baseapp/client_dashboard.html')
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\#####
@@ -131,55 +233,6 @@ def homePage(request):
     categories = ConsultancyCategories.objects.all()
     context = {'categories' : categories}
     return render(request, 'baseapp/homePage.html', context)
-
-# def signUp(request):
-#     if request.method == 'POST':
-#         form = UserRegistrationForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             messages.success(request, "User Registration Succesful...")
-#             return redirect("home")
-#         else:
-#             messages.error(request, "Registration Unsuccessful, Invalid Credentials Entered!!")
-#     else:
-#         form = UserRegistrationForm()
-
-#     context = {'form' : form}
-#     return render(request, 'accounts/registerPage.html', context)
-
-
-# def signIn(request):
-#     if request.method == 'POST':
-#         form = UserLoginForm(request, request.POST)
-#         if form.is_valid():
-#             username = request.POST['username']
-#             password = request.POST['password']
-#             user = authenticate(username=username, password=password)
-#             if user is not None:
-#                 login(request, user)
-#                 messages.info(request, "Congratulations, you are now logged in....")
-#                 return redirect("home")
-#             else:
-#                 messages.error(request, "Invalid Credentials Entered..Try again Later!!")
-
-#         else:
-#             messages.error(request, "Invalid Username or Password used....Try again Later!!!")
-#     else:
-#         form = UserLoginForm()
-#     context = {'form' : form}
-#     return render(request, 'accounts/loginPage.html', context)
-
-      
-# def signOut(request):
-#     logout(request)
-#     messages.info(request, "Successfully Logged out!!")
-#     return redirect("login")
-
-
-def profile(request, username):
-    profile = get_object_or_404(Profile, user__username=username)
-    context = {'profile' : profile}
-    return render(request, 'accounts/userProfile.html', context)
 
 
 def consultantServices(request, username):
