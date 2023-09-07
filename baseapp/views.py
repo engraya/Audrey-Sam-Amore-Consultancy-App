@@ -130,68 +130,453 @@ def afterlogin_view(request):
 #---------------------------------------------------------------------------------
 
 def admin_dashboard_view(request):
-    #for both table in admin dashboard
-    # consultants=models.Consultant.objects.all().order_by('-id')
-    # clients=models.Client.objects.all().order_by('-id')
-    # #for three cards
-    # consultantcount=models.Consultant.objects.all().filter(status=True).count()
-    # pendingconsultantcount=models.Consultant.objects.all().filter(status=False).count()
+    # for both table in admin dashboard
+    consultants=models.Consultant.objects.all().order_by('-id')
+    clients=models.Client.objects.all().order_by('-id')
+    #for three cards
+    consultantcount=models.Consultant.objects.all().filter(status=True).count()
+    pendingconsultantcount=models.Consultant.objects.all().filter(status=False).count()
 
-    # patientcount=models.Client.objects.all().filter(status=True).count()
-    # pendingclientcount=models.Client.objects.all().filter(status=False).count()
+    clientcount=models.Client.objects.all().filter(status=True).count()
+    pendingclientcount=models.Client.objects.all().filter(status=False).count()
 
-    # appointmentcount=models.Appointment.objects.all().filter(status=True).count()
-    # pendingappointmentcount=models.Appointment.objects.all().filter(status=False).count()
-    # mydict={
-    # 'doctors':doctors,
-    # 'patients':patients,
-    # 'doctorcount':doctorcount,
-    # 'pendingdoctorcount':pendingdoctorcount,
-    # 'patientcount':patientcount,
-    # 'pendingpatientcount':pendingpatientcount,
-    # 'appointmentcount':appointmentcount,
-    # 'pendingappointmentcount':pendingappointmentcount,
-    # }
-    return render(request,'baseapp/admin_dashboard.html')
+    appointmentcount=models.Appointment.objects.all().filter(status=True).count()
+    pendingappointmentcount=models.Appointment.objects.all().filter(status=False).count()
+    context = {
+    'consultants':consultants,
+    'clients':clients,
+    'consultantcount':consultantcount,
+    'pendingconsultantcount':pendingconsultantcount,
+    'clientcount':clientcount,
+    'pendingclientcount':pendingclientcount,
+    'appointmentcount':appointmentcount,
+    'pendingappointmentcount':pendingappointmentcount,
+    }
+    return render(request,'baseapp/admin_dashboard.html', context)
+
+
+# this view for sidebar click on admin page
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def admin_consultant_view(request):
+    return render(request,'baseapp/admin_consultant.html')
+
+
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def admin_view_consultant_view(request):
+    consultants = models.Consultant.objects.all().filter(status=True)
+    context = {'consultants':consultants}
+    return render(request,'baseapp/admin_view_consultant.html', context)
+
+
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def delete_consultant_from_hospital_view(request,pk):
+    consultant=models.Consultant.objects.get(id=pk)
+    user=models.User.objects.get(id=consultant.user_id)
+    user.delete()
+    consultant.delete()
+    return redirect('admin-view-consultant')
+
+
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def update_doctor_view(request,pk):
+    consultant=models.Consultant.objects.get(id=pk)
+    user=models.User.objects.get(id=consultant.user_id)
+
+    userForm=forms.ConsultantUserForm(instance=user)
+    consultantForm=forms.ConsultantForm(request.FILES,instance=consultant)
+    context = {'userForm':userForm,'consultantForm':consultantForm}
+    if request.method=='POST':
+        userForm=forms.ConsultantUserForm(request.POST,instance=user)
+        consultantForm=forms.ConsultantForm(request.POST,request.FILES,instance=consultant)
+        if userForm.is_valid() and consultantForm.is_valid():
+            user=userForm.save()
+            user.set_password(user.password)
+            user.save()
+            consultant=consultantForm.save(commit=False)
+            consultant.status=True
+            consultant.save()
+            return redirect('admin-view-consultant')
+    return render(request,'baseapp/admin_update_consultant.html',context)
+
+
+
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def admin_add_consultant_view(request):
+    userForm=forms.ConsultantUserForm()
+    consultantForm=forms.ConsultantForm()
+    context = {'userForm':userForm,'consultantForm':consultantForm}
+    if request.method=='POST':
+        userForm=forms.ConsultantUserForm(request.POST)
+        consultantForm=forms.ConsultantForm(request.POST, request.FILES)
+        if userForm.is_valid() and doctorForm.is_valid():
+            user=userForm.save()
+            user.set_password(user.password)
+            user.save()
+
+            consultant=consultantForm.save(commit=False)
+            consultant.user=user
+            consultant.status=True
+            consultant.save()
+
+            my_consultant_group = Group.objects.get_or_create(name='CONSULTANT')
+            my_consultant_group[0].user_set.add(user)
+
+        return HttpResponseRedirect('admin-view-consultant')
+    return render(request,'baseapp/admin_add_consultant.html',context)
+
+
+
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def admin_approve_consultant_view(request):
+    #those whose approval are needed
+    consultant = models.Consultant.objects.all().filter(status=False)
+    context = {'consultant':consultant}
+    return render(request,'baseapp/admin_approve_consultant.html', context)
+
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def approve_consultant_view(request,pk):
+    consultant = models.Consultant.objects.get(id=pk)
+    consultant.status=True
+    consultant.save()
+    return redirect(reverse('admin-approve-consultant'))
+
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def reject_consultant_view(request,pk):
+    consultant = models.Consultant.objects.get(id=pk)
+    user=models.User.objects.get(id=consultant.user_id)
+    user.delete()
+    consultant.delete()
+    return redirect('admin-approve-consultant')
+
+
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def admin_view_consultant_specialisation_view(request):
+    consultant = models.Consultant.objects.all().filter(status=True)
+    context = {'consultant':consultant}
+    return render(request,'baseapp/admin_view_consultant_specialisation.html', context)
+
+
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def admin_client_view(request):
+    return render(request,'baseapp/admin_client.html')
+
+
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def admin_view_client_view(request):
+    clients = models.Patient.objects.all().filter(status=True)
+    context = {'clients':clients}
+    return render(request,'baseapp/admin_view_patient.html', context)
+
+
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def delete_client_from_hospital_view(request,pk):
+    client=models.Client.objects.get(id=pk)
+    user=models.User.objects.get(id=client.user_id)
+    user.delete()
+    client.delete()
+    return redirect('admin-view-client')
+
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def update_client_view(request,pk):
+    cleint=models.Client.objects.get(id=pk)
+    user=models.User.objects.get(id=client.user_id)
+
+    userForm=forms.ClientUserForm(instance=user)
+    clientForm=forms.ClientForm(request.FILES,instance=client)
+    context = {'userForm':userForm,'clientForm':clientForm}
+    if request.method=='POST':
+        userForm=forms.ClientUserForm(request.POST,instance=user)
+        clientForm=forms.ClientForm(request.POST,request.FILES,instance=client)
+        if userForm.is_valid() and patientForm.is_valid():
+            user=userForm.save()
+            user.set_password(user.password)
+            user.save()
+            client=clientForm.save(commit=False)
+            client.status=True
+            client.assignedConsultantID=request.POST.get('assignedConsultantID')
+            client.save()
+            return redirect('admin-view-client')
+    return render(request,'baseapp/admin_update_client.html', context)
+
+
+
+
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def admin_add_client_view(request):
+    userForm=forms.ClientUserForm()
+    clientForm=forms.ClientForm()
+    context = {'userForm':userForm,'clientForm':clientForm}
+    if request.method=='POST':
+        userForm=forms.ClientUserForm(request.POST)
+        clientForm=forms.ClientForm(request.POST,request.FILES)
+        if userForm.is_valid() and clientForm.is_valid():
+            user=userForm.save()
+            user.set_password(user.password)
+            user.save()
+
+            client=clientForm.save(commit=False)
+            client.user=user
+            client.status=True
+            client.assignedConsultantID=request.POST.get('assignedConsultantID')
+            client.save()
+
+            my_client_group = Group.objects.get_or_create(name='CLIENT')
+            my_client_group[0].user_set.add(user)
+
+        return HttpResponseRedirect('admin-view-client')
+    return render(request,'baseapp/admin_add_client.html',context)
+
+
+
+
+#------------------FOR APPROVING PATIENT BY ADMIN----------------------
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def admin_approve_client_view(request):
+    #those whose approval are needed
+    clients = models.Client.objects.all().filter(status=False)
+    context = {'clients':clients}
+    return render(request,'baseapp/admin_approve_client.html', context)
+
+
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def approve_client_view(request,pk):
+    client=models.Client.objects.get(id=pk)
+    client.status=True
+    client.save()
+    return redirect(reverse('admin-approve-client'))
+
+
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def reject_client_view(request,pk):
+    client=models.Client.objects.get(id=pk)
+    user=models.User.objects.get(id=client.user_id)
+    user.delete()
+    client.delete()
+    return redirect('admin-approve-client')
+
+
+#-----------------APPOINTMENT START----------------------------------------------------------------#####
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def admin_appointment_view(request):
+    return render(request,'baseapp/admin_appointment.html')
+
+
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def admin_view_appointment_view(request):
+    appointments=models.Appointment.objects.all().filter(status=True)
+    context = {'appointments':appointments}
+    return render(request,'baseapp/admin_view_appointment.html', context)
+
+
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def admin_add_appointment_view(request):
+    appointmentForm=forms.AppointmentForm()
+    context = {'appointmentForm':appointmentForm,}
+    if request.method=='POST':
+        appointmentForm=forms.AppointmentForm(request.POST)
+        if appointmentForm.is_valid():
+            appointment=appointmentForm.save(commit=False)
+            appointment.consultantID=request.POST.get('consultantID')
+            appointment.clientID=request.POST.get('clientID')
+            appointment.consultantName=models.User.objects.get(id=request.POST.get('consultantID')).first_name
+            appointment.clientName=models.User.objects.get(id=request.POST.get('clientID')).first_name
+            appointment.status=True
+            appointment.save()
+        return HttpResponseRedirect('admin-view-appointment')
+    return render(request,'hospital/admin_add_appointment.html',context)
+
+
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def admin_approve_appointment_view(request):
+    #those whose approval are needed
+    appointments=models.Appointment.objects.all().filter(status=False)
+    context = {'appointments':appointments}
+    return render(request,'baseapp/admin_approve_appointment.html', context)
+
+
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def approve_appointment_view(request,pk):
+    appointment=models.Appointment.objects.get(id=pk)
+    appointment.status=True
+    appointment.save()
+    return redirect(reverse('admin-approve-appointment'))
+
+
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def reject_appointment_view(request,pk):
+    appointment=models.Appointment.objects.get(id=pk)
+    appointment.delete()
+    return redirect('admin-approve-appointment')
+#---------------------------------------------------------------------------------
+#------------------------ ADMIN RELATED VIEWS END ------------------------------
+#---------------------------------------------------------------------------------
+
 
 
 
 
 
 #---------------------------------------------------------------------------------
-#------------------------ DOCTOR RELATED VIEWS START ------------------------------
+#------------------------ CONSULTANT RELATED VIEWS START ------------------------------
 #---------------------------------------------------------------------------------
 
 def consultant_dashboard_view(request):
-    #for three cards
-    # patientcount=models.Patient.objects.all().filter(status=True,assignedDoctorId=request.user.id).count()
-    # appointmentcount=models.Appointment.objects.all().filter(status=True,doctorId=request.user.id).count()
-    # patientdischarged=models.PatientDischargeDetails.objects.all().distinct().filter(assignedDoctorName=request.user.first_name).count()
+    # for three cards
+    clientcount=models.Client.objects.all().filter(status=True,assignedConsultantID=request.user.id).count()
+    appointmentcount=models.Appointment.objects.all().filter(status=True,consultantID=request.user.id).count()
+    clientdischarged=models.ClientDischargeDetails.objects.all().distinct().filter(assignedConsultantName=request.user.first_name).count()
 
-    # #for  table in doctor dashboard
-    # appointments=models.Appointment.objects.all().filter(status=True,doctorId=request.user.id).order_by('-id')
-    # patientid=[]
-    # for a in appointments:
-    #     patientid.append(a.patientId)
-    # patients=models.Patient.objects.all().filter(status=True,user_id__in=patientid).order_by('-id')
-    # appointments=zip(appointments,patients)
-    # mydict={
-    # 'patientcount':patientcount,
-    # 'appointmentcount':appointmentcount,
-    # 'patientdischarged':patientdischarged,
-    # 'appointments':appointments,
-    # 'doctor':models.Doctor.objects.get(user_id=request.user.id), #for profile picture of doctor in sidebar
-    # }
-    return render(request,'baseapp/consultant_dashboard.html',)
-
-
+    #for  table in doctor dashboard
+    appointments=models.Appointment.objects.all().filter(status=True,consultantID=request.user.id).order_by('-id')
+    clientID=[]
+    for a in appointments:
+        clientID.append(a.clientID)
+    clients=models.Client.objects.all().filter(status=True,user_id__in=clientID).order_by('-id')
+    appointments=zip(appointments,clients)
+    context = {
+    'clientcount':clientcount,
+    'appointmentcount':appointmentcount,
+    'clientdischarged':clientdischarged,
+    'appointments':appointments,
+    'consultant':models.Consultant.objects.get(user_id=request.user.id), #for profile picture of doctor in sidebar
+    }
+    return render(request,'baseapp/consultant_dashboard.html', context)
 
 
 
 
+@login_required(login_url='consultantlogin')
+@user_passes_test(is_consultant)
+def consultant_client_view(request):
+    context = {
+    'consultant':models.Consultant.objects.get(user_id=request.user.id), #for profile picture of CONSULTANT in sidebar
+    }
+    return render(request,'baseapp/doctor_client.html',context)
 
 
 
+@login_required(login_url='consultantlogin')
+@user_passes_test(is_consultant)
+def consultant_view_client_view(request):
+    clients = models.Client.objects.all().filter(status=True,assignedConsultantID=request.user.id)
+    consultant = models.Consultant.objects.get(user_id=request.user.id) #for profile picture of CONSULTANT in sidebar
+    context = {'clients':clients,'consultant':consultant}
+    return render(request,'baseapp/consultant_view_client.html', context)
+
+
+
+@login_required(login_url='consultantlogin')
+@user_passes_test(is_consultant)
+def consultant_view_discharge_client_view(request):
+    dischargedclients = models.ClientDischargeDetails.objects.all().distinct().filter(assignedConsultantName=request.user.first_name)
+    consultant = models.Consultant.objects.get(user_id=request.user.id) #for profile picture of cosultant in sidebar
+    context = {'dischargedclients':dischargedclients,'consultant':consultant}
+    return render(request,'baseapp/consultant_view_discharge_client.html', context)
+
+
+
+@login_required(login_url='consultantlogin')
+@user_passes_test(is_consultant)
+def consultant_appointment_view(request):
+    consultant = models.Consultant.objects.get(user_id=request.user.id) #for profile picture of COSULTANT in sidebar
+    context = {'consultant':consultant}
+    return render(request,'baseapp/consultant_appointment.html', context)
+
+
+
+@login_required(login_url='consultantlogin')
+@user_passes_test(is_consultant)
+def consultant_view_appointment_view(request):
+    consultant = models.Consultant.objects.get(user_id=request.user.id) #for profile picture of CONSULTANT in sidebar
+    appointments=models.Appointment.objects.all().filter(status=True,consultantID=request.user.id)
+    clientID=[]
+    for a in appointments:
+        clientID.append(a.clientID)
+    clients=models.Patient.objects.all().filter(status=True,user_id__in=clientID)
+    appointments=zip(appointments, clients)
+    context = {'appointments':appointments,'consultant':consultant}
+    return render(request,'hospital/doctor_view_appointment.html', context)
+
+
+
+@login_required(login_url='consultantlogin')
+@user_passes_test(is_consultant)
+def consultant_delete_appointment_view(request):
+    consultant = models.Consultant.objects.get(user_id=request.user.id) #for profile picture of CONSULTANT in sidebar
+    appointments=models.Appointment.objects.all().filter(status=True,doctorId=request.user.id)
+    clientID=[]
+    for a in appointments:
+        clientID.append(a.clientID)
+    clients = models.Client.objects.all().filter(status=True,user_id__in=clientID)
+    appointments=zip(appointments, clients)
+    context = {'appointments':appointments,'consultant':consultant}
+    return render(request,'baseapp/consultant_delete_appointment.html', context)
+
+
+
+@login_required(login_url='consultantlogin')
+@user_passes_test(is_consultant)
+def delete_appointment_view(request,pk):
+    appointment=models.Appointment.objects.get(id=pk)
+    appointment.delete()
+    consultant = models.Consultant.objects.get(user_id=request.user.id) #for profile picture of CONSULTANT in sidebar
+    appointments=models.Appointment.objects.all().filter(status=True,consultantID=request.user.id)
+    clientID=[]
+    for a in appointments:
+        clientID.append(a.clientID)
+    clients = models.Client.objects.all().filter(status=True,user_id__in=clientID)
+    appointments=zip(appointments, clients)
+    context = {'appointments':appointments,'consultant':consultant}
+    return render(request,'baseapp/consultant_delete_appointment.html', context)
+
+
+
+#---------------------------------------------------------------------------------
+#------------------------ CONSULTANT RELATED VIEWS END ------------------------------
+#---------------------------------------------------------------------------------
 
 
 
@@ -199,20 +584,60 @@ def consultant_dashboard_view(request):
 #---------------------------------------------------------------------------------
 #------------------------ CLIENT RELATED VIEWS START ------------------------------
 #---------------------------------------------------------------------------------
-
+@login_required(login_url='clientlogin')
+@user_passes_test(is_client)
 def client_dashboard_view(request):
-    # patient=models.Patient.objects.get(user_id=request.user.id)
-    # doctor=models.Doctor.objects.get(user_id=patient.assignedDoctorId)
-    # mydict={
-    # 'patient':patient,
-    # 'doctorName':doctor.get_name,
-    # 'doctorMobile':doctor.mobile,
-    # 'doctorAddress':doctor.address,
-    # 'symptoms':patient.symptoms,
-    # 'doctorDepartment':doctor.department,
-    # 'admitDate':patient.admitDate,
-    # }
-    return render(request,'baseapp/client_dashboard.html')
+    client = models.Client.objects.get(user_id=request.user.id)
+    consultant = models.Consultant.objects.get(user_id=client.assignedConsultantID)
+    context = {'client': client,'consultantName': consultant.get_name}
+    return render(request,'baseapp/client_dashboard.html',context)
+
+
+
+@login_required(login_url='clientlogin')
+@user_passes_test(is_client)
+def client_appointment_view(request):
+    client = models.Client.objects.get(user_id=request.user.id) #for profile picture of Client in sidebar
+    context = {'client':client}
+    return render(request,'baseapp/client_appointment.html', context)
+
+
+
+@login_required(login_url='clientlogin')
+@user_passes_test(is_client)
+def client_book_appointment_view(request):
+    appointmentForm=forms.AppointmentForm()
+    client = models.Client.objects.get(user_id=request.user.id) #for profile picture of Client in sidebar
+    context = {'appointmentForm':appointmentForm,'client': client}
+    if request.method=='POST':
+        appointmentForm=forms.AppointmentForm(request.POST)
+        if appointmentForm.is_valid():
+            appointment=appointmentForm.save(commit=False)
+            appointment.consultantID=request.POST.get('consultantID')
+            appointment.cientID=request.user.id #----user can choose any client but only their info will be stored
+            appointment.consultantName=models.User.objects.get(id=request.POST.get('consultantID')).first_name
+            appointment.clientName=request.user.first_name #----user can choose any CLIENT but only their info will be stored
+            appointment.status=False
+            appointment.save()
+        return HttpResponseRedirect('client-view-appointment')
+    return render(request,'baseapp/client_book_appointment.html',context)
+
+
+
+
+
+@login_required(login_url='clientlogin')
+@user_passes_test(is_client)
+def client_view_appointment_view(request):
+    client = models.Client.objects.get(user_id=request.user.id) #for profile picture of Client in sidebar
+    appointments=models.Appointment.objects.all().filter(clientID=request.user.id)
+    context = {'appointments':appointments,'client':client}
+    return render(request,'baseapp/client_view_appointment.html', context)
+
+
+
+#------------------------ CLIENT RELATED VIEWS END ------------------------------
+#---------------------------------------------------------------------------------
 
 
 

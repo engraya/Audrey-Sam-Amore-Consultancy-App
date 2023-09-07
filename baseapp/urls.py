@@ -11,10 +11,10 @@ urlpatterns = [
     
 
         #password Reset urls
-    path('reset_password/', auth_views.PasswordResetView.as_view(template_name="network/passwordManage/password_reset_form.html"), name="reset_password"),
-    path('reset_password_done/', auth_views.PasswordResetDoneView.as_view(template_name="network/passwordManage/password_reset_sent.html"), name="password_reset_done"),
-    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name="network/passwordManage/password_reset_confirm.html"), name="password_reset_confirm"),
-    path('reset_password_complete', auth_views.PasswordResetCompleteView.as_view(template_name="network/passwordManage/password_reset_complete.html"), name="password_reset_complete"),
+    path('reset_password/', auth_views.PasswordResetView.as_view(template_name="baseapp/passwordManage/passwordManage/password_reset_form.html"), name="reset_password"),
+    path('reset_password_done/', auth_views.PasswordResetDoneView.as_view(template_name="baseapp/passwordManage/password_reset_sent.html"), name="password_reset_done"),
+    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name="baseapp/passwordManage/password_reset_confirm.html"), name="password_reset_confirm"),
+    path('reset_password_complete', auth_views.PasswordResetCompleteView.as_view(template_name="baseapp/passwordManage/password_reset_complete.html"), name="password_reset_complete"),
 
  
 
@@ -82,9 +82,67 @@ urlpatterns = [
     
     path('admin-dashboard', views.admin_dashboard_view,name='admin-dashboard'),
     path('doctor-dashboard', views.consultant_dashboard_view,name='consultant-dashboard'),
-    path('patient-dashboard', views.client_dashboard_view,name='client-dashboard'),
+    path('client-dashboard', views.client_dashboard_view,name='client-dashboard'),
+
+
+    path('admin-consultant', views.admin_consultant_view,name='admin-consultant'),
+    path('admin-view-consultant', views.admin_view_consultant_view,name='admin-view-consultant'),
+    path('delete-consultant-from-hospital/<int:pk>', views.delete_consultant_from_hospital_view,name='delete-consultant-from-hospital'),
+    path('update-consultant/<int:pk>', views.update_consultant_view,name='update-consultant'),
+    path('admin-add-consultant', views.admin_add_consultant_view,name='admin-add-consultant'),
+    path('admin-approve-consultant', views.admin_approve_consultant_view,name='admin-approve-consultant'),
+    path('approve-consultant/<int:pk>', views.approve_consultant_view,name='approve-consultant'),
+    path('reject-consultant/<int:pk>', views.reject_consultant_view,name='reject-consultant'),
+    path('admin-view-consultant-specialisation',views.admin_view_consultant_specialisation_view,name='admin-view-consultant-specialisation'),
+
+
+
+    path('admin-client', views.admin_client_view,name='admin-client'),
+    path('admin-view-client', views.admin_view_client_view,name='admin-view-client'),
+    path('delete-client-from-hospital/<int:pk>', views.delete_client_from_hospital_view,name='delete-client-from-hospital'),
+    path('update-client/<int:pk>', views.update_client_view,name='update-client'),
+    path('admin-add-client', views.admin_add_client_view,name='admin-add-client'),
+    path('admin-approve-client', views.admin_approve_client_view,name='admin-approve-client'),
+    path('approve-client/<int:pk>', views.approve_client_view,name='approve-client'),
+    path('reject-client/<int:pk>', views.reject_client_view,name='reject-client'),
+    path('admin-discharge-client', views.admin_discharge_client_view,name='admin-discharge-client'),
+    path('admin-press-client', views.admin_press_client_view,name='admin-press-client'),
+    path('discharge-client/<int:pk>', views.discharge_client_view,name='discharge-client'),
+    path('press-client/<int:pk>', views.press_client_view,name='press-client'),
+    path('download-pdf/<int:pk>', views.download_pdf_view,name='download-pdf'),
+
+
+    path('admin-appointment', views.admin_appointment_view,name='admin-appointment'),
+    path('admin-view-appointment', views.admin_view_appointment_view,name='admin-view-appointment'),
+    path('admin-add-appointment', views.admin_add_appointment_view,name='admin-add-appointment'),
+    path('admin-approve-appointment', views.admin_approve_appointment_view,name='admin-approve-appointment'),
+    path('approve-appointment/<int:pk>', views.approve_appointment_view,name='approve-appointment'),
+    path('reject-appointment/<int:pk>', views.reject_appointment_view,name='reject-appointment'),
 
    
 
 ]
 
+
+#---------FOR CONSULTANT RELATED URLS-------------------------------------
+urlpatterns +=[
+    path('consultant-dashboard', views.consultant_dashboard_view,name='consultant-dashboard'),
+    path('consultant-client', views.consultant_client_view,name='consultant-patient'),
+    path('consultant-view-patient', views.consultant_view_client_view,name='consultant-view-client'),
+    path('consultant-view-discharge-patient',views.consultant_view_discharge_client_view,name='consultant-view-discharge-client'),
+    path('consultant-appointment', views.consultant_appointment_view,name='consultant-appointment'),
+    path('consultant-view-appointment', views.consultant_view_appointment_view,name='consultant-view-appointment'),
+    path('consultant-delete-appointment',views.consultant_delete_appointment_view,name='consultant-delete-appointment'),
+    path('delete-appointment/<int:pk>', views.delete_appointment_view,name='delete-appointment'),
+]
+
+#---------FOR CLIENT RELATED URLS-------------------------------------
+urlpatterns +=[
+
+    path('client-dashboard', views.client_dashboard_view,name='client-dashboard'),
+    path('client-appointment', views.client_appointment_view,name='client-appointment'),
+    path('client-book-appointment', views.client_book_appointment_view,name='client-book-appointment'),
+    path('client-view-appointment', views.client_view_appointment_view,name='client-view-appointment'),
+    path('client-discharge', views.client_discharge_view,name='client-discharge'),
+
+]
