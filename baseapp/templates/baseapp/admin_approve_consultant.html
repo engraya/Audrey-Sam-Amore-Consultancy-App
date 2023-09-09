@@ -1,4 +1,4 @@
-{% extends 'hospital/admin_base.html' %}
+{% extends 'baseapp/admin_base.html' %}
 {% block content %}
 {%load static%}
 
@@ -24,7 +24,7 @@
 <div class="container">
   <div class="panel panel-primary">
     <div class="panel-heading">
-      <h6 class="panel-title">Doctors Applied For Registration</h6>
+      <h6 class="panel-title">Consultants Applied For Registration</h6>
     </div>
     <table class="table table-hover" id="dev-table">
       <thead>
@@ -38,7 +38,7 @@
           <th>Reject</th>
         </tr>
       </thead>
-      {% for d in doctors %}
+      {% for d in consultants %}
       <tr>
         <td> {{d.get_name}}</td>
         <td> <img src="{% static d.profile_pic.url %}" alt="Profile Pic" height="40px" width="40px" /></td>

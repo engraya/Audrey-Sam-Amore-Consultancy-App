@@ -29,7 +29,7 @@ GENDER_CHOICES = (
         ("Male", "Male"),
         ("Female", "Female")
     )
-APPIONTMENT_REQUEST_CATEGORY=[('Dating','Dating'),
+APPOINTMENT_REQUEST_CATEGORY=[('Dating','Dating'),
 ('Relationships','Relationships'),
 ('Breakups','Breakups'),
 ('Divorce','Divorce'),
@@ -49,6 +49,7 @@ class Consultant(models.Model):
     twitter = models.URLField(max_length=200, null=True, blank=True)
     instagram = models.URLField(max_length=200, null=True, blank=True)
     website = models.URLField(max_length=200, null=True, blank=True)
+    status=models.BooleanField(default=False)
     @property
     def get_name(self):
         return self.user.first_name+" "+self.user.last_name
@@ -94,7 +95,7 @@ class Appointment(models.Model):
     consultantID=models.PositiveIntegerField(null=False)
     clientName=models.CharField(max_length=40,null=True)
     consultantName=models.CharField(max_length=40,null=True)
-    appiontmentRequestCategory = models.CharField(max_length=100, choices=APPIONTMENT_REQUEST_CATEGORY)
+    appointmentRequestCategory = models.CharField(max_length=100, choices=APPOINTMENT_REQUEST_CATEGORY)
     appointmentDate=models.DateField(auto_now=True)
     description=models.TextField(max_length=500)
     status=models.BooleanField(default=False)
@@ -139,8 +140,6 @@ class Notification(models.Model):
 
     def __str__(self):
         return f'{self.user} : {self.message}'
-
-
 
 class ClientDischargeDetails(models.Model):
     clientId=models.PositiveIntegerField(null=False)

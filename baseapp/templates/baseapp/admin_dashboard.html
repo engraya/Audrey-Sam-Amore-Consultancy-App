@@ -7,27 +7,27 @@
   <div class="row">
     <div class="panel panel-primary" style="margin-left:2%;">
       <div class="panel-heading" style="text-align:center;">
-        <h6 class="panel-title">Recent Doctors</h6>
+        <h6 class="panel-title">Recent Consultants</h6>
       </div>
       <table class="table table-hover" id="dev-table">
         <thead>
           <tr>
             <th>Name</th>
-            <th>Department</th>
-            <th>Mobile</th>
-            <th>Status</th>
+            <th>Email</th>
+            <th>Specialization</th>
+            <th>Availability Status</th>
 
           </tr>
         </thead>
-        {% for d in doctors %}
+        {% for consultant in consultants %}
         <tr>
-          <td> {{d.get_name}}</td>
-          <td>{{d.department}}</td>
-          <td>{{d.mobile}}</td>
-          {%if d.status%}
-          <td> <span class="label label-primary">Permanent</span></td>
+          <td>{{consultant.get_name}}</td>
+          <td>{{consultant.email}}</td>
+          <td>{{consultant.specialization}}</td>
+          {%if consultant.status%}
+          <td> <span class="label label-primary">Active</span></td>
           {% else %}
-          <td> <span class="label label-success">On Hold</span></td>
+          <td> <span class="label label-success">Not Active</span></td>
           {% endif %}
 
         </tr>
@@ -37,29 +37,29 @@
 
     <div class="panel panel-primary" style="margin-left:5%;">
       <div class="panel-heading" style="text-align:center;">
-        <h6 class="panel-title">Recent Patient</h6>
+        <h6 class="panel-title">Recent Client</h6>
       </div>
       <table class="table table-hover" id="dev-table">
         <thead>
           <tr>
             <th>Name</th>
-            <th>Symptoms</th>
-            <th>Mobile</th>
-            <th>Address</th>
+            <th>Email</th>
+            <th>Gender</th>
+            <th>Register Date</th>
             <th>Status</th>
 
           </tr>
         </thead>
-        {% for p in patients %}
+        {% for client in clients %}
         <tr>
-          <td> {{p.get_name}}</td>
-          <td>{{p.symptoms}}</td>
-          <td>{{p.mobile}}</td>
-          <td>{{p.address}}</td>
-          {%if p.status%}
-          <td> <span class="label label-primary">Admitted</span></td>
+          <td> {{client.get_name}}</td>
+          <td>{{client.email}}</td>
+          <td>{{client.gender}}</td>
+          <td>{{client.siteRegisterDate}}</td>
+          {%if client.status%}
+          <td> <span class="label label-primary">Active</span></td>
           {% else %}
-          <td> <span class="label label-success">On Hold</span></td>
+          <td> <span class="label label-success">Not Active</span></td>
           {% endif %}
 
         </tr>

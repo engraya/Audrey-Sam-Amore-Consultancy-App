@@ -16,7 +16,7 @@ from datetime import datetime, timedelta, date
 # Create your views here.
 
 
-#BASE PRELOGIN VIEWS
+#---------------------------------BASE PRELOGIN VIEWS--------------------------#
 def home_view(request):
     if request.user.is_authenticated:
         return HttpResponseRedirect('afterlogin')
@@ -415,6 +415,9 @@ def admin_add_appointment_view(request):
             appointment=appointmentForm.save(commit=False)
             appointment.consultantID=request.POST.get('consultantID')
             appointment.clientID=request.POST.get('clientID')
+            appointment.appointmentRequestCategory=request.POST.get('category')
+            appointment.description=request.POST.get('description')
+            appointment.notes=request.POST.get('notes')
             appointment.consultantName=models.User.objects.get(id=request.POST.get('consultantID')).first_name
             appointment.clientName=models.User.objects.get(id=request.POST.get('clientID')).first_name
             appointment.status=True
