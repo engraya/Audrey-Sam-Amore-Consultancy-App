@@ -156,15 +156,13 @@ def admin_dashboard_view(request):
 
 
 # this view for sidebar click on admin page
-@login_required(login_url='adminlogin')
-@user_passes_test(is_admin)
+
 def admin_consultant_view(request):
     return render(request,'baseapp/admin_consultant.html')
 
 
 
-@login_required(login_url='adminlogin')
-@user_passes_test(is_admin)
+
 def admin_view_consultant_view(request):
     consultants = models.Consultant.objects.all().filter(status=True)
     context = {'consultants':consultants}
@@ -172,8 +170,7 @@ def admin_view_consultant_view(request):
 
 
 
-@login_required(login_url='adminlogin')
-@user_passes_test(is_admin)
+
 def delete_consultant_from_hospital_view(request,pk):
     consultant=models.Consultant.objects.get(id=pk)
     user=models.User.objects.get(id=consultant.user_id)
@@ -183,8 +180,7 @@ def delete_consultant_from_hospital_view(request,pk):
 
 
 
-@login_required(login_url='adminlogin')
-@user_passes_test(is_admin)
+
 def update_doctor_view(request,pk):
     consultant=models.Consultant.objects.get(id=pk)
     user=models.User.objects.get(id=consultant.user_id)
@@ -356,9 +352,8 @@ def admin_add_client_view(request):
 
 
 
-#------------------FOR APPROVING PATIENT BY ADMIN----------------------
-@login_required(login_url='adminlogin')
-@user_passes_test(is_admin)
+#------------------FOR APPROVING CLIENTS BY ADMIN----------------------
+
 def admin_approve_client_view(request):
     #those whose approval are needed
     clients = models.Client.objects.all().filter(status=False)
@@ -367,8 +362,6 @@ def admin_approve_client_view(request):
 
 
 
-@login_required(login_url='adminlogin')
-@user_passes_test(is_admin)
 def approve_client_view(request,pk):
     client=models.Client.objects.get(id=pk)
     client.status=True
@@ -377,8 +370,6 @@ def approve_client_view(request,pk):
 
 
 
-@login_required(login_url='adminlogin')
-@user_passes_test(is_admin)
 def reject_client_view(request,pk):
     client=models.Client.objects.get(id=pk)
     user=models.User.objects.get(id=client.user_id)
