@@ -36,12 +36,12 @@
           <th>Reject</th>
         </tr>
       </thead>
-      {% for a in appointments %}
+      {% for appiontment in appointments %}
       <tr>
-        <td> {{a.consultantName}}</td>
-        <td>{{a.clientName}}</td>
-        <td>{{a.description}}</td>
-        <td>{{a.appointmentDate}}</td>
+        <td>{{appiontment.consultantName}}</td>
+        <td>{{appiontment.clientName}}</td>
+        <td>{{appiontment.description}}</td>
+        <td>{{appiontment.appointmentDate}}</td>
         <td><a class="btn btn-primary btn-xs" href="{% url 'approve-appointment' a.id  %}"><span class="glyphicon glyphicon-ok"></span></a></td>
         <td><a class="btn btn-danger btn-xs" href="{% url 'reject-appointment' a.id  %}"><span class="glyphicon glyphicon-trash"></span></a></td>
       </tr>

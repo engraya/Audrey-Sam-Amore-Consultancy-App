@@ -101,10 +101,10 @@ class UserLoginForm(AuthenticationForm):
 
 class AppointmentForm(forms.ModelForm):
     consultantID=forms.ModelChoiceField(queryset=Consultant.objects.all().filter(availability_status=True),empty_label="Name and Service Speciality", to_field_name="user_id")
-    clientID=forms.ModelChoiceField(queryset=Client.objects.all().filter(availability_status=True),empty_label="Patient Name", to_field_name="user_id")
+    clientID=forms.ModelChoiceField(queryset=Client.objects.all().filter(availability_status=True),empty_label="Client Name", to_field_name="user_id")
     class Meta:
         model = Appointment
-        fields = ['notes','description','status']
+        fields = ['notes','description','status','appointmentRequestCategory']
 
 
 #for CONTACT US page

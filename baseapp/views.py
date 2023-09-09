@@ -388,15 +388,12 @@ def reject_client_view(request,pk):
 
 
 #-----------------APPOINTMENT START----------------------------------------------------------------#####
-@login_required(login_url='adminlogin')
-@user_passes_test(is_admin)
+
 def admin_appointment_view(request):
     return render(request,'baseapp/admin_appointment.html')
 
 
 
-@login_required(login_url='adminlogin')
-@user_passes_test(is_admin)
 def admin_view_appointment_view(request):
     appointments=models.Appointment.objects.all().filter(status=True)
     context = {'appointments':appointments}
@@ -404,8 +401,6 @@ def admin_view_appointment_view(request):
 
 
 
-@login_required(login_url='adminlogin')
-@user_passes_test(is_admin)
 def admin_add_appointment_view(request):
     appointmentForm=forms.AppointmentForm()
     context = {'appointmentForm':appointmentForm,}
@@ -427,8 +422,6 @@ def admin_add_appointment_view(request):
 
 
 
-@login_required(login_url='adminlogin')
-@user_passes_test(is_admin)
 def admin_approve_appointment_view(request):
     #those whose approval are needed
     appointments=models.Appointment.objects.all().filter(status=False)
@@ -437,8 +430,7 @@ def admin_approve_appointment_view(request):
 
 
 
-@login_required(login_url='adminlogin')
-@user_passes_test(is_admin)
+
 def approve_appointment_view(request,pk):
     appointment=models.Appointment.objects.get(id=pk)
     appointment.status=True
@@ -447,8 +439,7 @@ def approve_appointment_view(request,pk):
 
 
 
-@login_required(login_url='adminlogin')
-@user_passes_test(is_admin)
+
 def reject_appointment_view(request,pk):
     appointment=models.Appointment.objects.get(id=pk)
     appointment.delete()
