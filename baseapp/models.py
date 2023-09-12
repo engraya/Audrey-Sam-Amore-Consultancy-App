@@ -29,14 +29,7 @@ GENDER_CHOICES = (
         ("Male", "Male"),
         ("Female", "Female")
     )
-APPOINTMENT_REQUEST_CATEGORY=[('Dating','Dating'),
-('Relationships','Relationships'),
-('Breakups','Breakups'),
-('Divorce','Divorce'),
-('Marriage','Marriage'),
-('Family','Family'),
-('Business','Business'),
-]
+
 class Consultant(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE, related_name='consultant_user')
     profilePicture = models.ImageField(upload_to='profilePics/', blank=True, null=True)
@@ -89,7 +82,14 @@ class ConsultancyService(models.Model):
     def __str__(self):
         return self.title
 
-
+APPOINTMENT_REQUEST_CATEGORY=[('Dating','Dating'),
+('Relationships','Relationships'),
+('Breakups','Breakups'),
+('Divorce','Divorce'),
+('Marriage','Marriage'),
+('Family','Family'),
+('Business','Business'),
+]
 class Appointment(models.Model):
     clientID=models.PositiveIntegerField(null=False)
     consultantID=models.PositiveIntegerField(null=False)
@@ -141,11 +141,20 @@ class Notification(models.Model):
     def __str__(self):
         return f'{self.user} : {self.message}'
 
+
+APPOINTMENT_REQUEST_CATEGORY=[('Dating','Dating'),
+('Relationships','Relationships'),
+('Breakups','Breakups'),
+('Divorce','Divorce'),
+('Marriage','Marriage'),
+('Family','Family'),
+('Business','Business'),
+]
 class ClientDischargeDetails(models.Model):
     clientId=models.PositiveIntegerField(null=False)
     clientName=models.CharField(max_length=40)
     assignedconsultantName=models.CharField(max_length=40)
-    appiontmentRequestCategory = models.CharField(max_length=100, choices=APPIONTMENT_REQUEST_CATEGORY)
+    appiontmentRequestCategory = models.CharField(max_length=100, choices=APPOINTMENT_REQUEST_CATEGORY)
     consultationRequestDate=models.DateField(null=False)
     consultationReleaseDate=models.DateField(null=False)
     consultancyFee=models.PositiveIntegerField(null=False)
@@ -157,7 +166,7 @@ class ClientPrescription(models.Model):
     clientId=models.PositiveIntegerField(null=False)
     clientName=models.CharField(max_length=40)
     assignedconsultantName=models.CharField(max_length=40)
-    appiontmentRequestCategory = models.CharField(max_length=100, choices=APPIONTMENT_REQUEST_CATEGORY)
+    appiontmentRequestCategory = models.CharField(max_length=100, choices=APPOINTMENT_REQUEST_CATEGORY)
     presscription = models.TextField(max_length=100,null=True, blank=True)
 
 

@@ -18,7 +18,7 @@ urlpatterns = [
 
  
 
-    path("consultant/<str:username>/services", views.consultantServices, name="consultant_sevices"),
+   
     path('service/<int:serviceID>', views.consultancyServiceDetail, name="service_detail"),
     path('consultation/requests', views.consultationRequest, name="consultation_request"),
     path('consultation/requests/<int:requestID>/<str:action>/', views.acceptDeclineRequest, name="accept_decline_request"),
@@ -26,9 +26,6 @@ urlpatterns = [
 
 
     path('send_message/<int:reciever_id>/', views.sendMessage, name="send_messsage"),
-    path('inbox', views.inbox, name="inbox"),
-    path('notifications', views.notifications, name="notifications"),
-    path('mark_notification/<int:notification_id>/', views.mark_notifications_as_read, name="mark_notification"),
 
 
     path('consultants', views.consultantsList, name="consultants"),
@@ -105,11 +102,11 @@ urlpatterns = [
     path('admin-approve-client', views.admin_approve_client_view,name='admin-approve-client'),
     path('approve-client/<int:pk>', views.approve_client_view,name='approve-client'),
     path('reject-client/<int:pk>', views.reject_client_view,name='reject-client'),
-    path('admin-discharge-client', views.admin_discharge_client_view,name='admin-discharge-client'),
-    path('admin-press-client', views.admin_press_client_view,name='admin-press-client'),
-    path('discharge-client/<int:pk>', views.discharge_client_view,name='discharge-client'),
-    path('press-client/<int:pk>', views.press_client_view,name='press-client'),
-    path('download-pdf/<int:pk>', views.download_pdf_view,name='download-pdf'),
+    # path('admin-discharge-client', views.admin_discharge_client_view,name='admin-discharge-client'),
+    # path('admin-press-client', views.admin_press_client_view,name='admin-press-client'),
+    # path('discharge-client/<int:pk>', views.discharge_client_view,name='discharge-client'),
+    # path('press-client/<int:pk>', views.press_client_view,name='press-client'),
+    # path('download-pdf/<int:pk>', views.download_pdf_view,name='download-pdf'),
 
 
     path('admin-appointment', views.admin_appointment_view,name='admin-appointment'),
@@ -118,6 +115,8 @@ urlpatterns = [
     path('admin-approve-appointment', views.admin_approve_appointment_view,name='admin-approve-appointment'),
     path('approve-appointment/<int:pk>', views.approve_appointment_view,name='approve-appointment'),
     path('reject-appointment/<int:pk>', views.reject_appointment_view,name='reject-appointment'),
+    path('admin-inbox', views.admin_inbox,name='admin-inbox'),
+    path('admin-notifications', views.admin_notifications,name='admin-notifications'),
 
    
 
@@ -134,6 +133,9 @@ urlpatterns +=[
     path('consultant-view-appointment', views.consultant_view_appointment_view,name='consultant-view-appointment'),
     path('consultant-delete-appointment',views.consultant_delete_appointment_view,name='consultant-delete-appointment'),
     path('delete-appointment/<int:pk>', views.delete_appointment_view,name='delete-appointment'),
+    path('consultant-inbox', views.consultant_inbox,name='consultant-inbox'),
+    path('consultant-notifications', views.consultant_notifications,name='consultant-notifications'),
+    path("consultant/<str:username>/services", views.consultantServicesView, name="consultant_sevices"),
 ]
 
 #---------FOR CLIENT RELATED URLS-------------------------------------
@@ -143,6 +145,9 @@ urlpatterns +=[
     path('client-appointment', views.client_appointment_view,name='client-appointment'),
     path('client-book-appointment', views.client_book_appointment_view,name='client-book-appointment'),
     path('client-view-appointment', views.client_view_appointment_view,name='client-view-appointment'),
-    path('client-discharge', views.client_discharge_view,name='client-discharge'),
+    # path('client-discharge', views.client_discharge_view,name='client-discharge'),
+    path('client-inbox', views.client_inbox,name='client-inbox'),
+    path('client-notifications', views.client_notifications,name='client-notifications'),
+
 
 ]
